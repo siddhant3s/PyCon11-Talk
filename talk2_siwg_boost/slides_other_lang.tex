@@ -1,0 +1,588 @@
+% Created 2011-09-16 Fri 15:30
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{soul}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\mode<beamer>{\usetheme{Madrid}}
+\documentclass[8pt]{beamer} 
+\providecommand{\alert}[1]{\textbf{#1}}
+
+\title{Using Python With Other languages (Boost and SWIG)}
+\author{Siddhant Sanyam}
+\date{2011-09-07 Wed}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}
+\frametitle{Outline}
+\setcounter{tocdepth}{3}
+\tableofcontents
+\end{frame}
+
+
+
+\section{Python With C++}
+\label{sec-1}
+\begin{frame}
+\frametitle{Why C++ ?}
+\label{sec-1_1}
+
+
+\begin{itemize}
+\item Because it is as good as C (well, most of the time)
+\item Extending C API is ugly, and terribly confusing
+\item Because it is Object Oriented
+\begin{itemize}
+\item Thus you can think in OOP
+\item Resembles Python (the OO part)
+\end{itemize}
+\item It is more powerfull as a language
+\item Offers competitive performance as C
+\item Because of Boost (wait till I introduce you to it)
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{What can be done with Python and C++ ?}
+\label{sec-1_2}
+
+
+\begin{itemize}
+\item Same stuff you can do with C but more
+\item You can have class abstractions
+\item Extending Python with C++
+\item Embedding Python in C++
+\item Python is more close to C++ than to C
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Available options to extend Python with C++}
+\label{sec-1_3}
+
+   There are multiple options that are available to extend Python with C++
+
+\begin{itemize}
+\item Using the ever-friendly Python C API
+\item Boost's API for C++
+\item SWIG
+     Let's take each one of them one by one
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Extending Python with C++ Using Python C API}
+\label{sec-1_4}
+
+
+\begin{itemize}
+\item Basic idea is that since C++ is essential ``C with Classes'', we can use C++ as C and use the Python C API
+\item But that sucks! \ldots{} at multiple levels
+\begin{itemize}
+\item You have to deal with the ugly API and you miss the comfort of Boost and SWIG
+\item You are using C++ as C, so no classes and objects, why not use C then?
+\item For simple cases when you want to enjoy C++ as a language (with STL and all), it makes sense
+\item But you can't expose the class-like interface of C++
+\end{itemize}
+\item When will you use it?
+     Almost never. Why? Because there are superior alternative available
+\end{itemize}
+\end{frame}
+\section{Extending C++ using Boost.Python}
+\label{sec-2}
+\begin{frame}
+\frametitle{Introduction to Boost.Python}
+\label{sec-2_1}
+
+  So basically, it is a wrapper class on the Python C API
+  It's awesome
+
+\begin{itemize}
+\item Because it is easy to use (majorly because of the syntax)
+\item You can expose the class interface of C++ with this
+\item Great for small to medium sized projects
+\item It does operator overloading too!
+\item Inheritance is also supported
+\item In short, it brings C++ almost completely to Python
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Boost.Python kickstart}
+\label{sec-2_2}
+
+   We assume that you have Boost.Python installed on your system.
+
+\begin{itemize}
+\item Boost.Python also works without installing it, although it is recommended that you do install it.
+\item Boost.Python requires you to include a simple header file <boost/python.hpp>
+\item We'll be basically writing Python modules using C++
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Compiling and Build process}
+\label{sec-2_3}
+
+   You have many options to build and compile Boost
+
+\begin{itemize}
+\item bjam, the recommended way of building Boost
+\item mannually linking and compiling using g++
+\end{itemize}
+   We'll assume g++ to be de facto standard compiler. Python 2.4 and above is recommended.
+   
+\end{frame}
+\begin{frame}
+\frametitle{Hello Boost!}
+\label{sec-2_4}
+
+   Our purpose is to write a module \texttt{hello} which has a function called \texttt{say}
+
+\begin{itemize}
+\item We'll writing the definiation of the function \texttt{say} in C++
+\item Then we'll use Boost.Python to expose the function in a module called \texttt{hello}
+\item It's similar stuff we did with Python C API, but I think you'll appreciate the neatness.
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Here is the code for \texttt{say}}
+\label{sec-2_5}
+
+   \texttt{say} takes one \texttt{unsigned int} as an arguement and returns `Hello', `Boost.Python' or 
+   `World' depending on if the \texttt{int} passed was 0, 1 or 2.
+   Definition of \texttt{say}
+\begin{verbatim}
+1:  char const* say(unsigned x)
+2:  {
+3:    static char const* const msgs[] = { "Hello", "Boost.Python", "World!" };
+4:  
+5:    if (x > 2) 
+6:      throw std::range_error("say: index out of range");
+7:  
+8:    return msgs[x];
+9:  }
+\end{verbatim}
+
+\begin{itemize}
+\item Simple enough right?
+\item Well, writing C++ is always the simple part, the important part is making a module out of it.
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{The Boost's Magic}
+\label{sec-2_6}
+
+   Tuns out that to write the module \texttt{hello} and putting function \texttt{say} in it is pretty easy in Boost.Python
+\begin{verbatim}
+1:  #include <boost/python.hpp>
+2:  using namespace boost::python;
+3:  BOOST_PYTHON_MODULE(hello)
+4:  {
+5:    def("say", //the name of the function to be exposed in Python
+6:        say,   //the function name in c++
+7:        "return one of 3 part of Hello Boost.Python World"); //a small description of function for the help function
+8:  }
+\end{verbatim}
+   That's it!
+
+\begin{itemize}
+\item Now you know what is meant by ``easy to use''
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Compile and Go}
+\label{sec-2_7}
+
+   As I said there are multiple way to compile and go. Easiest is through bjam
+   Just execute the command
+\begin{verbatim}
+    bjam --tools-set
+\end{verbatim}
+
+   
+\end{frame}
+\begin{frame}
+\frametitle{Now that's cool, but what about higher stuff?}
+\label{sec-2_8}
+
+
+\begin{itemize}
+\item We'll take each example file one by one
+\item Please use a text editor with Line numbering because we'll be using the line numbers to reference examples
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Examples}
+\label{sec-2_9}
+
+
+\begin{itemize}
+\item Exposing Classes
+\item Operator Overloading
+\item Inheritance
+\item Virtual Function
+\item Serialization
+\item Object coversion
+\end{itemize}
+\end{frame}
+\section{Extending Python with C and C++ using SWIG}
+\label{sec-3}
+\begin{frame}
+\frametitle{SWIG}
+\label{sec-3_1}
+
+   It's a wrapper and interface writer for C/C++
+   It means
+
+\begin{itemize}
+\item You write C or C++ code, and this tool will write the interface and wrapper to other languages for your code.
+\item It supports many languages like Python, Tcl, Ruby, Guile, and Java
+\item It supports nearly every feature of C++
+\item Usually it offers a neat distinction betwen the original code and the interface (thus you don't have to modify your orignal sources much)
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Advantage of SWIG}
+\label{sec-3_2}
+
+
+\begin{itemize}
+\item It's a uniform over different language
+\item Hence it is awesome way to have wrappers for your C++ library.
+\item It's much more complete to cover features of C++
+\item If your interface is in separate file, writing SWIG interface is trivial.
+\item It requires none or very less change in your original source code.
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{How does it work for Python}
+\label{sec-3_3}
+
+
+\begin{itemize}
+\item You first write your C/C++ interface and definition
+\item You write a dot i file (example.i) which specifies the interface of the wrapper
+\item Use SWIG to generate wrapper files of Python
+\item Compiler C/C++ code to a shared library
+\item Use your freshly baked module.
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{SWIG kickstart}
+\label{sec-3_4}
+
+
+\begin{itemize}
+\item You should be having SWIG installed, Python installed.
+\item You optionally would like to have a c++ compiler installed :P
+\item We'll be using our beloved GNU's GCC in examples.
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Hello SWIG}
+\label{sec-3_5}
+
+   First create the C part
+   Header file/Interface file
+
+\begin{verbatim}
+1:  /*hello.h*/
+2:  
+3:  /*Signature, Prototype, Definition of the function*/
+4:  int factorial(int n);
+\end{verbatim}
+   
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{The definition}
+\label{sec-3_6}
+
+   Now we'll write the definition of our function
+\begin{verbatim}
+ 1:  /* hello.c */
+ 2:  /* Definition of factorial */
+ 3:  #include "hello.h"
+ 4:  int factorial(int n) {
+ 5:    if (n < 0){ 
+ 6:      return 0; // Hmm, we're treating this error case
+ 7:    }
+ 8:    if (n == 0) {
+ 9:      return 1;
+10:    }
+11:    else {
+12:      return n * factorial(n-1);
+13:    }
+14:  }
+\end{verbatim}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Using in a C program}
+\label{sec-3_7}
+
+   This is how the main file will use this library in your  typical C program
+\begin{verbatim}
+1:  #include <stdio.h>
+2:  #include "hello.h"
+3:  
+4:  int main(void)
+5:  {
+6:    int a = 5;
+7:    printf("%i", factorial(a) );
+8:  }
+\end{verbatim}
+   And then you compile it with hello.c
+\begin{verbatim}
+    gcc main.c hello.c -o hello_executable
+    ./hello_executable
+\end{verbatim}
+\end{frame}
+\begin{frame}
+\frametitle{This was C, let's make it Pythonable}
+\label{sec-3_8}
+
+
+\begin{itemize}
+\item You will appreciate the simplicity of SWIG.
+\item Our C interface is already done.
+\item We'll just write a SWIG's .i file to expose the interface to SWIG
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{hello.i}
+\label{sec-3_9}
+
+\begin{verbatim}
+/* File: hello.i */
+%module hello
+ /*
+   The following blocks are included as is in the wrapper file
+   Important to include the interface file in wrapper file
+   because the input file is just used for generating the wrapper code
+ */
+
+%{
+#include "hello.h"
+%}
+/*
+  We'll now declare the interface for the wrapper file.
+  At worst case, we can simply #include "hello.h" again
+*/
+int factorial(int);
+\end{verbatim}
+     That's it.
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Let it SWIG}
+\label{sec-3_10}
+
+   Now will run SWIG on this input file we just wrote.
+\begin{verbatim}
+    swig -python hello.i
+\end{verbatim}
+
+   Now you should have these files
+\begin{verbatim}
+    hello.py hello.h hello.c hello_wrap.c
+\end{verbatim}
+
+   Compile your stuff
+\begin{verbatim}
+    gcc -c hello.c hello_wrap.c -I /usr/include/python2.7 -I/usr/lib/python2.7/
+\end{verbatim}
+
+   You'll be having \texttt{hello.o} and \texttt{hello\_wrap.o} . It's time to link them into a shared library
+   The name of the so file is module name prefixed by an underscore
+\begin{verbatim}
+    ld -shared -o _hello.so hello.o hello_wrap.o
+\end{verbatim}
+
+   Ta da! we have got our \texttt{\_hello.so} ready.
+\end{frame}
+\begin{frame}
+\frametitle{Lock and load}
+\label{sec-3_11}
+
+
+\begin{itemize}
+\item Now we have \texttt{hello.py} (generated by SWIG using hello.i)
+\item We can simply \texttt{import hello} to load the module.
+\item The loading of the .so file is job of hello.py
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Using Module}
+\label{sec-3_12}
+
+\begin{verbatim}
+python
+>>> import hello
+>>> hello.factorial(5)
+120
+>>>
+\end{verbatim}
+
+\begin{itemize}
+\item Enjoyed it! Let's do it for C++ now
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{First thing first, writing the C++ code}
+\label{sec-3_13}
+
+
+\begin{itemize}
+\item We could all the above example of simple function exposing in C++ too
+\item But since it is C++, We'll  do OOP by having a simple class of Point number
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{The interface file}
+\label{sec-3_14}
+
+\begin{verbatim}
+/* File : Point.h */
+
+class Point
+{
+private:
+  int x;
+  int y;
+public:
+  Point(int,int);
+  float dist_origin(); //distance from origin
+};
+\end{verbatim}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Implementation file for Point}
+\label{sec-3_15}
+
+\begin{verbatim}
+/* File: Point.cpp */
+#include "Point.h"
+#include <cmath>
+Point::Point(int X, int Y)
+{
+  x=X;
+  y=Y;
+}
+float Point::dist_origin()
+{
+  return pow(x*x + y*y, 0.5);
+}
+\end{verbatim}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Using this Library in C++ (normally)}
+\label{sec-3_16}
+
+\begin{verbatim}
+/* File: main.cpp */
+#include <iostream>
+#include "Point.h"
+int main()
+{
+  Point p1= Point(2,3);
+  std::cout << p1.dist_origin();
+}
+\end{verbatim}
+   Let's compile this, like we do it in C++
+\begin{verbatim}
+    g++ main.cpp Point.cpp -o point_example
+    ./point_example
+\end{verbatim}
+
+   
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Now time for it to be eaten by Python}
+\label{sec-3_17}
+
+   We'll write the SWIG's .i file
+\begin{verbatim}
+/* File : Point.i */
+
+%module Point // Module name
+
+%{
+#include "Point.h" //including it for  the Point_wrap.cxx file
+  %}
+
+/*
+  We are being lazy over here. Instead of putting the
+  actual interface, we just copied it from Point.h
+*/
+%include "Point.h"
+\end{verbatim}
+   Let's quickly make the wrapper c++ file and the interface .py files using SWIG
+\begin{verbatim}
+    swig -python -c++ Point.i
+\end{verbatim}
+
+   Notice that we used \texttt{-c++} to tell SWIG that we'll be using Classes etc.
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Compiling the resultant files}
+\label{sec-3_18}
+
+   The following file are generated
+\begin{verbatim}
+    Point_wrap.c Point_wrap.cxx Point.py
+\end{verbatim}
+
+   Let's use g++ to compile our wrapper and source file
+\begin{verbatim}
+    g++ -O2 -fPIC -c Point.cpp Point_wrap.cxx -I /usr/include/python2.7/
+\end{verbatim}
+
+   Now we'll make the shared library \texttt{\_Point.so} (note the naming convention is same)
+\begin{verbatim}
+    g++ -shared -o _Point.so Point.o Point_wrap.o 
+\end{verbatim}
+
+   That's it, we can start using this class in our Python code
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Run the module}
+\label{sec-3_19}
+
+\begin{verbatim}
+python
+>>> import Point
+>>> p = Point.Point(3,4)
+>>> p.dist_origin()
+5.0
+\end{verbatim}
+   Wasn't that simple?
+\end{frame}
+\begin{frame}
+\frametitle{SWIG Examples}
+\label{sec-3_20}
+
+
+\begin{itemize}
+\item Global Variables
+\item SWIG Directives
+\item Constants
+\item Pointers
+\item Operator Overloading
+\item Inheritance
+\end{itemize}
+
+
+
+   
+   
+\end{frame}
+
+\end{document}

@@ -1,0 +1,957 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+lang="en" xml:lang="en">
+<head>
+<title>Using Python With Other languages (Boost and SWIG)</title>
+<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2011-09-07 Wed"/>
+<meta name="author" content="Siddhant Sanyam"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+<div id="content">
+
+<h1 class="title">Using Python With Other languages (Boost and SWIG)</h1>
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">Python With C++ </a>
+<ul>
+<li><a href="#sec-1_1">Why C++ ? </a></li>
+<li><a href="#sec-1_2">What can be done with Python and C++ ? </a></li>
+<li><a href="#sec-1_3">Available options to extend Python with C++ </a></li>
+<li><a href="#sec-1_4">Extending Python with C++ Using Python C API </a></li>
+</ul>
+</li>
+<li><a href="#sec-2">Extending C++ using Boost.Python </a>
+<ul>
+<li><a href="#sec-2_1">Introduction to Boost.Python </a></li>
+<li><a href="#sec-2_2">Boost.Python kickstart </a></li>
+<li><a href="#sec-2_3">Compiling and Build process </a></li>
+<li><a href="#sec-2_4">Hello Boost! </a></li>
+<li><a href="#sec-2_5">Here is the code for <code>say</code> </a></li>
+<li><a href="#sec-2_6">The Boost's Magic </a></li>
+<li><a href="#sec-2_7">Compile and Go </a></li>
+<li><a href="#sec-2_8">Now that's cool, but what about higher stuff? </a></li>
+<li><a href="#sec-2_9">Examples </a></li>
+</ul>
+</li>
+<li><a href="#sec-3">Extending Python with C and C++ using SWIG </a>
+<ul>
+<li><a href="#sec-3_1">SWIG </a></li>
+<li><a href="#sec-3_2">Advantage of SWIG </a></li>
+<li><a href="#sec-3_3">How does it work for Python </a></li>
+<li><a href="#sec-3_4">SWIG kickstart </a></li>
+<li><a href="#sec-3_5">Hello SWIG </a></li>
+<li><a href="#sec-3_6">The definition </a></li>
+<li><a href="#sec-3_7">Using in a C program </a></li>
+<li><a href="#sec-3_8">This was C, let's make it Pythonable </a></li>
+<li><a href="#sec-3_9">hello.i </a></li>
+<li><a href="#sec-3_10">Let it SWIG </a></li>
+<li><a href="#sec-3_11">Lock and load </a></li>
+<li><a href="#sec-3_12">Using Module </a></li>
+<li><a href="#sec-3_13">First thing first, writing the C++ code </a></li>
+<li><a href="#sec-3_14">The interface file </a></li>
+<li><a href="#sec-3_15">Implementation file for Point </a></li>
+<li><a href="#sec-3_16">Using this Library in C++ (normally) </a></li>
+<li><a href="#sec-3_17">Now time for it to be eaten by Python </a></li>
+<li><a href="#sec-3_18">Compiling the resultant files </a></li>
+<li><a href="#sec-3_19">Run the module </a></li>
+<li><a href="#sec-3_20">SWIG Examples </a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2"></span> Python With C++ </h2>
+<div class="outline-text-2" id="text-1">
+
+
+</div>
+
+<div id="outline-container-1_1" class="outline-3">
+<h3 id="sec-1_1"><span class="section-number-3"></span> Why C++ ? </h3>
+<div class="outline-text-3" id="text-1_1">
+
+<ul>
+<li>Because it is as good as C (well, most of the time)
+</li>
+<li>Extending C API is ugly, and terribly confusing
+</li>
+<li>Because it is Object Oriented
+<ul>
+<li>Thus you can think in OOP
+</li>
+<li>Resembles Python (the OO part)
+</li>
+</ul>
+
+</li>
+<li>It is more powerfull as a language
+</li>
+<li>Offers competitive performance as C
+</li>
+<li>Because of Boost (wait till I introduce you to it)
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1_2" class="outline-3">
+<h3 id="sec-1_2"><span class="section-number-3"></span> What can be done with Python and C++ ? </h3>
+<div class="outline-text-3" id="text-1_2">
+
+<ul>
+<li>Same stuff you can do with C but more
+</li>
+<li>You can have class abstractions
+</li>
+<li>Extending Python with C++
+</li>
+<li>Embedding Python in C++
+</li>
+<li>Python is more close to C++ than to C
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1_3" class="outline-3">
+<h3 id="sec-1_3"><span class="section-number-3"></span> Available options to extend Python with C++ </h3>
+<div class="outline-text-3" id="text-1_3">
+
+<p>   There are multiple options that are available to extend Python with C++
+</p><ul>
+<li>Using the ever-friendly Python C API
+</li>
+<li>Boost's API for C++
+</li>
+<li>SWIG
+     Let's take each one of them one by one
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1_4" class="outline-3">
+<h3 id="sec-1_4"><span class="section-number-3"></span> Extending Python with C++ Using Python C API </h3>
+<div class="outline-text-3" id="text-1_4">
+
+<ul>
+<li>Basic idea is that since C++ is essential ``C with Classes", we can use C++ as C and use the Python C API
+</li>
+<li>But that sucks! &hellip; at multiple levels
+<ul>
+<li>You have to deal with the ugly API and you miss the comfort of Boost and SWIG
+</li>
+<li>You are using C++ as C, so no classes and objects, why not use C then?
+</li>
+<li>For simple cases when you want to enjoy C++ as a language (with STL and all), it makes sense
+</li>
+<li>But you can't expose the class-like interface of C++
+</li>
+</ul>
+
+</li>
+<li>When will you use it?
+     Almost never. Why? Because there are superior alternative available
+</li>
+</ul>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2"></span> Extending C++ using Boost.Python </h2>
+<div class="outline-text-2" id="text-2">
+
+
+</div>
+
+<div id="outline-container-2_1" class="outline-3">
+<h3 id="sec-2_1"><span class="section-number-3"></span> Introduction to Boost.Python </h3>
+<div class="outline-text-3" id="text-2_1">
+
+<p>  So basically, it is a wrapper class on the Python C API
+  It's awesome
+</p><ul>
+<li>Because it is easy to use (majorly because of the syntax)
+</li>
+<li>You can expose the class interface of C++ with this
+</li>
+<li>Great for small to medium sized projects
+</li>
+<li>It does operator overloading too!
+</li>
+<li>Inheritance is also supported
+</li>
+<li>In short, it brings C++ almost completely to Python
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-2_2" class="outline-3">
+<h3 id="sec-2_2"><span class="section-number-3"></span> Boost.Python kickstart </h3>
+<div class="outline-text-3" id="text-2_2">
+
+<p>   We assume that you have Boost.Python installed on your system.
+</p><ul>
+<li>Boost.Python also works without installing it, although it is recommended that you do install it.
+</li>
+<li>Boost.Python requires you to include a simple header file &lt;boost/python.hpp&gt;
+</li>
+<li>We'll be basically writing Python modules using C++
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-2_3" class="outline-3">
+<h3 id="sec-2_3"><span class="section-number-3"></span> Compiling and Build process </h3>
+<div class="outline-text-3" id="text-2_3">
+
+<p>   You have many options to build and compile Boost
+</p><ul>
+<li>bjam, the recommended way of building Boost
+</li>
+<li>mannually linking and compiling using g++
+</li>
+</ul>
+
+<p>   We'll assume g++ to be de facto standard compiler. Python 2.4 and above is recommended.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2_4" class="outline-3">
+<h3 id="sec-2_4"><span class="section-number-3"></span> Hello Boost! </h3>
+<div class="outline-text-3" id="text-2_4">
+
+<p>   Our purpose is to write a module <code>hello</code> which has a function called <code>say</code>
+</p><ul>
+<li>We'll writing the definiation of the function <code>say</code> in C++
+</li>
+<li>Then we'll use Boost.Python to expose the function in a module called <code>hello</code>
+</li>
+<li>It's similar stuff we did with Python C API, but I think you'll appreciate the neatness.
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-2_5" class="outline-3">
+<h3 id="sec-2_5"><span class="section-number-3"></span> Here is the code for <code>say</code> </h3>
+<div class="outline-text-3" id="text-2_5">
+
+<p>   <code>say</code> takes one <code>unsigned int</code> as an arguement and returns `Hello', 'Boost.Python' or 
+   'World' depending on if the <code>int</code> passed was 0, 1 or 2.
+   Definition of <code>say</code>
+</p>
+
+
+<pre class="src src-c++"><span class="linenr"> 1:  </span><span style="color: #00cd00;">char</span> <span style="color: #00cdcd; font-weight: bold;">const</span>* <span style="color: #0000ee; font-weight: bold;">say</span>(<span style="color: #00cd00;">unsigned</span> <span style="color: #cdcd00;">x</span>)
+<span class="linenr"> 2:  </span>{
+<span class="linenr"> 3:  </span>  <span style="color: #00cdcd; font-weight: bold;">static</span> <span style="color: #00cd00;">char</span> <span style="color: #00cdcd; font-weight: bold;">const</span>* <span style="color: #00cdcd; font-weight: bold;">const</span> msgs[] = { <span style="color: #00cd00;">"Hello"</span>, <span style="color: #00cd00;">"Boost.Python"</span>, <span style="color: #00cd00;">"World!"</span> };
+<span class="linenr"> 4:  </span>
+<span class="linenr"> 5:  </span>  <span style="color: #00cdcd; font-weight: bold;">if</span> (x &gt; 2) 
+<span class="linenr"> 6:  </span>    <span style="color: #00cdcd; font-weight: bold;">throw</span> <span style="color: #cd00cd;">std</span>::range_error(<span style="color: #00cd00;">"say: index out of range"</span>);
+<span class="linenr"> 7:  </span>
+<span class="linenr"> 8:  </span>  <span style="color: #00cdcd; font-weight: bold;">return</span> msgs[x];
+<span class="linenr"> 9:  </span>}
+<span class="linenr">10:  </span>
+</pre>
+
+
+<ul>
+<li>Simple enough right?
+</li>
+<li>Well, writing C++ is always the simple part, the important part is making a module out of it.
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-2_6" class="outline-3">
+<h3 id="sec-2_6"><span class="section-number-3"></span> The Boost's Magic </h3>
+<div class="outline-text-3" id="text-2_6">
+
+<p>   Tuns out that to write the module <code>hello</code> and putting function <code>say</code> in it is pretty easy in Boost.Python
+</p>
+
+
+<pre class="src src-c++"><span class="linenr">1:  </span><span style="color: #0000ee; font-weight: bold;">#include</span> <span style="color: #00cd00;">&lt;boost/python.hpp&gt;</span>
+<span class="linenr">2:  </span><span style="color: #00cdcd; font-weight: bold;">using</span> <span style="color: #00cdcd; font-weight: bold;">namespace</span> <span style="color: #cd00cd;">boost</span>::<span style="color: #cd00cd;">python</span>;
+<span class="linenr">3:  </span><span style="color: #0000ee; font-weight: bold;">BOOST_PYTHON_MODULE</span>(hello)
+<span class="linenr">4:  </span>{
+<span class="linenr">5:  </span>  def(<span style="color: #00cd00;">"say"</span>, <span style="color: #cd0000;">//</span>the name of the function to be exposed in Python
+<span class="linenr">6:  </span>      say,   <span style="color: #cd0000;">//</span>the function name in c++
+<span class="linenr">7:  </span>      <span style="color: #00cd00;">"return one of 3 part of Hello Boost.Python World"</span>); <span style="color: #cd0000;">//</span>a small description of function for the help function
+<span class="linenr">8:  </span>}
+<span class="linenr">9:  </span>
+</pre>
+
+
+<p>
+   That's it!
+</p><ul>
+<li>Now you know what is meant by ``easy to use"
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-2_7" class="outline-3">
+<h3 id="sec-2_7"><span class="section-number-3"></span> Compile and Go </h3>
+<div class="outline-text-3" id="text-2_7">
+
+<p>   As I said there are multiple way to compile and go. Easiest is through bjam
+   Just execute the command
+</p><pre class="example">
+bjam --tools-set
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-2_8" class="outline-3">
+<h3 id="sec-2_8"><span class="section-number-3"></span> Now that's cool, but what about higher stuff? </h3>
+<div class="outline-text-3" id="text-2_8">
+
+<ul>
+<li>We'll take each example file one by one
+</li>
+<li>Please use a text editor with Line numbering because we'll be using the line numbers to reference examples
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-2_9" class="outline-3">
+<h3 id="sec-2_9"><span class="section-number-3"></span> Examples </h3>
+<div class="outline-text-3" id="text-2_9">
+
+<ul>
+<li>Exposing Classes
+</li>
+<li>Operator Overloading
+</li>
+<li>Inheritance
+</li>
+<li>Virtual Function
+</li>
+<li>Serialization
+</li>
+<li>Object coversion
+</li>
+</ul>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2"></span> Extending Python with C and C++ using SWIG </h2>
+<div class="outline-text-2" id="text-3">
+
+
+</div>
+
+<div id="outline-container-3_1" class="outline-3">
+<h3 id="sec-3_1"><span class="section-number-3"></span> SWIG </h3>
+<div class="outline-text-3" id="text-3_1">
+
+<p>   It's a wrapper and interface writer for C/C++
+   It means
+</p><ul>
+<li>You write C or C++ code, and this tool will write the interface and wrapper to other languages for your code.
+</li>
+<li>It supports many languages like Python, Tcl, Ruby, Guile, and Java
+</li>
+<li>It supports nearly every feature of C++
+</li>
+<li>Usually it offers a neat distinction betwen the original code and the interface (thus you don't have to modify your orignal sources much)
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-3_2" class="outline-3">
+<h3 id="sec-3_2"><span class="section-number-3"></span> Advantage of SWIG </h3>
+<div class="outline-text-3" id="text-3_2">
+
+<ul>
+<li>It's a uniform over different language
+</li>
+<li>Hence it is awesome way to have wrappers for your C++ library.
+</li>
+<li>It's much more complete to cover features of C++
+</li>
+<li>If your interface is in separate file, writing SWIG interface is trivial.
+</li>
+<li>It requires none or very less change in your original source code.
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-3_3" class="outline-3">
+<h3 id="sec-3_3"><span class="section-number-3"></span> How does it work for Python </h3>
+<div class="outline-text-3" id="text-3_3">
+
+<ul>
+<li>You first write your C/C++ interface and definition
+</li>
+<li>You write a dot i file (example.i) which specifies the interface of the wrapper
+</li>
+<li>Use SWIG to generate wrapper files of Python
+</li>
+<li>Compiler C/C++ code to a shared library
+</li>
+<li>Use your freshly baked module.
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-3_4" class="outline-3">
+<h3 id="sec-3_4"><span class="section-number-3"></span> SWIG kickstart </h3>
+<div class="outline-text-3" id="text-3_4">
+
+<ul>
+<li>You should be having SWIG installed, Python installed.
+</li>
+<li>You optionally would like to have a c++ compiler installed :P
+</li>
+<li>We'll be using our beloved GNU's GCC in examples.
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-3_5" class="outline-3">
+<h3 id="sec-3_5"><span class="section-number-3"></span> Hello SWIG </h3>
+<div class="outline-text-3" id="text-3_5">
+
+<p>   First create the C part
+   Header file/Interface file
+</p>
+
+
+
+<pre class="src src-c"><span class="linenr">1:  </span><span style="color: #cd0000;">/*</span>hello.h<span style="color: #cd0000;">*/</span>
+<span class="linenr">2:  </span>
+<span class="linenr">3:  </span><span style="color: #cd0000;">/*</span>Signature, Prototype, Definition of the function<span style="color: #cd0000;">*/</span>
+<span class="linenr">4:  </span><span style="color: #00cd00;">int</span> <span style="color: #0000ee; font-weight: bold;">factorial</span>(<span style="color: #00cd00;">int</span> <span style="color: #cdcd00;">n</span>);
+<span class="linenr">5:  </span>
+<span class="linenr">6:  </span>
+</pre>
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-3_6" class="outline-3">
+<h3 id="sec-3_6"><span class="section-number-3"></span> The definition </h3>
+<div class="outline-text-3" id="text-3_6">
+
+<p>   Now we'll write the definition of our function
+</p>
+
+
+<pre class="src src-c"><span class="linenr"> 1:  </span><span style="color: #cd0000;">/* </span>hello.c <span style="color: #cd0000;">*/</span>
+<span class="linenr"> 2:  </span><span style="color: #cd0000;">/* </span>Definition of factorial <span style="color: #cd0000;">*/</span>
+<span class="linenr"> 3:  </span><span style="color: #0000ee; font-weight: bold;">#include</span> <span style="color: #00cd00;">"hello.h"</span>
+<span class="linenr"> 4:  </span><span style="color: #00cd00;">int</span> <span style="color: #0000ee; font-weight: bold;">factorial</span>(<span style="color: #00cd00;">int</span> <span style="color: #cdcd00;">n</span>) {
+<span class="linenr"> 5:  </span>  <span style="color: #00cdcd; font-weight: bold;">if</span> (n &lt; 0){ 
+<span class="linenr"> 6:  </span>    <span style="color: #00cdcd; font-weight: bold;">return</span> 0; <span style="color: #cd0000;">// </span>Hmm, we're treating this error case
+<span class="linenr"> 7:  </span>  }
+<span class="linenr"> 8:  </span>  <span style="color: #00cdcd; font-weight: bold;">if</span> (n == 0) {
+<span class="linenr"> 9:  </span>    <span style="color: #00cdcd; font-weight: bold;">return</span> 1;
+<span class="linenr">10:  </span>  }
+<span class="linenr">11:  </span>  <span style="color: #00cdcd; font-weight: bold;">else</span> {
+<span class="linenr">12:  </span>    <span style="color: #00cdcd; font-weight: bold;">return</span> n * factorial(n-1);
+<span class="linenr">13:  </span>  }
+<span class="linenr">14:  </span>}
+<span class="linenr">15:  </span>
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-3_7" class="outline-3">
+<h3 id="sec-3_7"><span class="section-number-3"></span> Using in a C program </h3>
+<div class="outline-text-3" id="text-3_7">
+
+<p>   This is how the main file will use this library in your  typical C program
+</p>
+
+
+<pre class="src src-c"><span class="linenr">1:  </span><span style="color: #0000ee; font-weight: bold;">#include</span> <span style="color: #00cd00;">&lt;stdio.h&gt;</span>
+<span class="linenr">2:  </span><span style="color: #0000ee; font-weight: bold;">#include</span> <span style="color: #00cd00;">"hello.h"</span>
+<span class="linenr">3:  </span>
+<span class="linenr">4:  </span><span style="color: #00cd00;">int</span> <span style="color: #0000ee; font-weight: bold;">main</span>(<span style="color: #00cd00;">void</span>)
+<span class="linenr">5:  </span>{
+<span class="linenr">6:  </span>  <span style="color: #00cd00;">int</span> <span style="color: #cdcd00;">a</span> = 5;
+<span class="linenr">7:  </span>  printf(<span style="color: #00cd00;">"%i"</span>, factorial(a) );
+<span class="linenr">8:  </span>}
+</pre>
+
+
+<p>
+   And then you compile it with hello.c
+</p><pre class="example">
+gcc main.c hello.c -o hello_executable
+./hello_executable
+</pre>
+
+</div>
+
+</div>
+
+<div id="outline-container-3_8" class="outline-3">
+<h3 id="sec-3_8"><span class="section-number-3"></span> This was C, let's make it Pythonable </h3>
+<div class="outline-text-3" id="text-3_8">
+
+<ul>
+<li>You will appreciate the simplicity of SWIG.
+</li>
+<li>Our C interface is already done.
+</li>
+<li>We'll just write a SWIG's .i file to expose the interface to SWIG
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-3_9" class="outline-3">
+<h3 id="sec-3_9"><span class="section-number-3"></span> hello.i </h3>
+<div class="outline-text-3" id="text-3_9">
+
+
+
+
+<pre class="src src-c"><span style="color: #cd0000;">/* </span>File: hello.i <span style="color: #cd0000;">*/</span>
+%module hello
+ <span style="color: #cd0000;">/*</span>
+   The following blocks are included as is in the wrapper file
+   Important to include the interface file in wrapper file
+   because the input file is just used for generating the wrapper code
+ <span style="color: #cd0000;">*/</span>
+
+%{
+<span style="color: #0000ee; font-weight: bold;">#include</span> <span style="color: #00cd00;">"hello.h"</span>
+%}
+<span style="color: #cd0000;">/*</span>
+  We'll now declare the interface for the wrapper file.
+  At worst case, we can simply #include "hello.h" again
+<span style="color: #cd0000;">*/</span>
+<span style="color: #00cd00;">int</span> <span style="color: #0000ee; font-weight: bold;">factorial</span>(<span style="color: #00cd00;">int</span>);
+
+</pre>
+
+
+<p>
+     That's it.
+</p></div>
+
+</div>
+
+<div id="outline-container-3_10" class="outline-3">
+<h3 id="sec-3_10"><span class="section-number-3"></span> Let it SWIG </h3>
+<div class="outline-text-3" id="text-3_10">
+
+<p>   Now will run SWIG on this input file we just wrote.
+</p><pre class="example">
+swig -python hello.i
+</pre>
+
+<p>   Now you should have these files
+</p><pre class="example">
+hello.py hello.h hello.c hello_wrap.c
+</pre>
+
+<p>   Compile your stuff
+</p><pre class="example">
+gcc -c hello.c hello_wrap.c -I /usr/include/python2.7 -I/usr/lib/python2.7/
+</pre>
+
+<p>   You'll be having <code>hello.o</code> and <code>hello_wrap.o</code> . It's time to link them into a shared library
+   The name of the so file is module name prefixed by an underscore
+</p><pre class="example">
+ld -shared -o _hello.so hello.o hello_wrap.o
+</pre>
+
+<p>   Ta da! we have got our <code>_hello.so</code> ready.
+</p></div>
+
+</div>
+
+<div id="outline-container-3_11" class="outline-3">
+<h3 id="sec-3_11"><span class="section-number-3"></span> Lock and load </h3>
+<div class="outline-text-3" id="text-3_11">
+
+<ul>
+<li>Now we have <code>hello.py</code> (generated by SWIG using hello.i)
+</li>
+<li>We can simply <code>import hello</code> to load the module.
+</li>
+<li>The loading of the .so file is job of hello.py
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-3_12" class="outline-3">
+<h3 id="sec-3_12"><span class="section-number-3"></span> Using Module </h3>
+<div class="outline-text-3" id="text-3_12">
+
+
+
+
+<pre class="src src-python">python
+&gt;&gt;&gt; <span style="color: #00cdcd; font-weight: bold;">import</span> hello
+&gt;&gt;&gt; hello.factorial(5)
+120
+&gt;&gt;&gt;
+</pre>
+
+
+<ul>
+<li>Enjoyed it! Let's do it for C++ now
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-3_13" class="outline-3">
+<h3 id="sec-3_13"><span class="section-number-3"></span> First thing first, writing the C++ code </h3>
+<div class="outline-text-3" id="text-3_13">
+
+<ul>
+<li>We could all the above example of simple function exposing in C++ too
+</li>
+<li>But since it is C++, We'll  do OOP by having a simple class of Point number
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-3_14" class="outline-3">
+<h3 id="sec-3_14"><span class="section-number-3"></span> The interface file </h3>
+<div class="outline-text-3" id="text-3_14">
+
+
+
+
+<pre class="src src-c++"><span style="color: #cd0000;">/* </span>File : Point.h */
+
+<span style="color: #00cdcd; font-weight: bold;">class</span> <span style="color: #00cd00;">Point</span>
+{
+<span style="color: #00cdcd; font-weight: bold;">private</span>:
+  <span style="color: #00cd00;">int</span> <span style="color: #cdcd00;">x</span>;
+  <span style="color: #00cd00;">int</span> <span style="color: #cdcd00;">y</span>;
+<span style="color: #00cdcd; font-weight: bold;">public</span>:
+  <span style="color: #0000ee; font-weight: bold;">Point</span>(<span style="color: #00cd00;">int</span>,<span style="color: #00cd00;">int</span>);
+  <span style="color: #00cd00;">float</span> <span style="color: #0000ee; font-weight: bold;">dist_origin</span>(); <span style="color: #cd0000;">//</span>distance from origin
+};
+
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-3_15" class="outline-3">
+<h3 id="sec-3_15"><span class="section-number-3"></span> Implementation file for Point </h3>
+<div class="outline-text-3" id="text-3_15">
+
+
+
+
+<pre class="src src-c++"><span style="color: #cd0000;">/* </span>File: Point.cpp */
+<span style="color: #0000ee; font-weight: bold;">#include</span> <span style="color: #00cd00;">"Point.h"</span>
+<span style="color: #0000ee; font-weight: bold;">#include</span> <span style="color: #00cd00;">&lt;cmath&gt;</span>
+<span style="color: #cd00cd;">Point</span>::<span style="color: #0000ee; font-weight: bold;">Point</span>(<span style="color: #00cd00;">int</span> <span style="color: #cdcd00;">X</span>, <span style="color: #00cd00;">int</span> <span style="color: #cdcd00;">Y</span>)
+{
+  x=X;
+  y=Y;
+}
+<span style="color: #00cd00;">float</span> <span style="color: #cd00cd;">Point</span>::<span style="color: #0000ee; font-weight: bold;">dist_origin</span>()
+{
+  <span style="color: #00cdcd; font-weight: bold;">return</span> pow(x*x + y*y, 0.5);
+}
+
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-3_16" class="outline-3">
+<h3 id="sec-3_16"><span class="section-number-3"></span> Using this Library in C++ (normally) </h3>
+<div class="outline-text-3" id="text-3_16">
+
+
+
+
+<pre class="src src-c++"><span style="color: #cd0000;">/* </span>File: main.cpp */
+<span style="color: #0000ee; font-weight: bold;">#include</span> <span style="color: #00cd00;">&lt;iostream&gt;</span>
+<span style="color: #0000ee; font-weight: bold;">#include</span> <span style="color: #00cd00;">"Point.h"</span>
+<span style="color: #00cd00;">int</span> <span style="color: #0000ee; font-weight: bold;">main</span>()
+{
+  <span style="color: #00cd00;">Point</span> <span style="color: #cdcd00;">p1</span>= Point(2,3);
+  <span style="color: #cd00cd;">std</span>::cout &lt;&lt; p1.dist_origin();
+}
+
+</pre>
+
+
+<p>
+   Let's compile this, like we do it in C++
+</p><pre class="example">
+g++ main.cpp Point.cpp -o point_example
+./point_example
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-3_17" class="outline-3">
+<h3 id="sec-3_17"><span class="section-number-3"></span> Now time for it to be eaten by Python </h3>
+<div class="outline-text-3" id="text-3_17">
+
+<p>   We'll write the SWIG's .i file
+</p>
+
+
+<pre class="src src-c++"><span style="color: #cd0000;">/* </span>File : Point.i */
+
+%module Point <span style="color: #cd0000;">// </span>Module name
+
+%{
+<span style="color: #0000ee; font-weight: bold;">#include</span> <span style="color: #00cd00;">"Point.h"</span> <span style="color: #cd0000;">//</span>including it for  the Point_wrap.cxx file
+  %}
+
+<span style="color: #cd0000;">/*</span>
+  We are being lazy over here. Instead of putting the
+  actual interface, we just copied it from Point.h
+*/
+%include <span style="color: #00cd00;">"Point.h"</span>
+</pre>
+
+
+<p>
+   Let's quickly make the wrapper c++ file and the interface .py files using SWIG
+</p><pre class="example">
+swig -python -c++ Point.i
+</pre>
+
+<p>   Notice that we used <code>-c++</code> to tell SWIG that we'll be using Classes etc.
+</p></div>
+
+</div>
+
+<div id="outline-container-3_18" class="outline-3">
+<h3 id="sec-3_18"><span class="section-number-3"></span> Compiling the resultant files </h3>
+<div class="outline-text-3" id="text-3_18">
+
+<p>   The following file are generated
+</p><pre class="example">
+Point_wrap.c Point_wrap.cxx Point.py
+</pre>
+
+<p>   Let's use g++ to compile our wrapper and source file
+</p><pre class="example">
+g++ -O2 -fPIC -c Point.cpp Point_wrap.cxx -I /usr/include/python2.7/
+</pre>
+
+<p>   Now we'll make the shared library <code>_Point.so</code> (note the naming convention is same)
+</p><pre class="example">
+g++ -shared -o _Point.so Point.o Point_wrap.o 
+</pre>
+
+<p>   That's it, we can start using this class in our Python code
+</p></div>
+
+</div>
+
+<div id="outline-container-3_19" class="outline-3">
+<h3 id="sec-3_19"><span class="section-number-3"></span> Run the module </h3>
+<div class="outline-text-3" id="text-3_19">
+
+
+
+
+<pre class="src src-python">python
+&gt;&gt;&gt; <span style="color: #00cdcd; font-weight: bold;">import</span> Point
+&gt;&gt;&gt; p = Point.Point(3,4)
+&gt;&gt;&gt; p.dist_origin()
+5.0
+</pre>
+
+
+<p>
+   Wasn't that simple?
+</p></div>
+
+</div>
+
+<div id="outline-container-3_20" class="outline-3">
+<h3 id="sec-3_20"><span class="section-number-3"></span> SWIG Examples </h3>
+<div class="outline-text-3" id="text-3_20">
+
+<ul>
+<li>Global Variables
+</li>
+<li>SWIG Directives
+</li>
+<li>Constants
+</li>
+<li>Pointers
+</li>
+<li>Operator Overloading
+</li>
+<li>Inheritance
+</li>
+</ul>
+
+
+
+
+
+
+</div>
+</div>
+</div>
+<div id="postamble">
+<p class="date">Date: 2011-09-07 Wed</p>
+<p class="author">Author: Siddhant Sanyam</p>
+<p class="creator">Org version 7.5 with Emacs version 23</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+</div>
+</div>
+</body>
+</html>

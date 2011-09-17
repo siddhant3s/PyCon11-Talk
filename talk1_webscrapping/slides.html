@@ -1,0 +1,1795 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+lang="en" xml:lang="en">
+<head>
+<title>The Art of Webscrapping</title>
+<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2011-09-03 Sat"/>
+<meta name="author" content="Siddhant Sanyam"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+<div id="content">
+
+<h1 class="title">The Art of Webscrapping</h1>
+
+
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2"></span> Introduction to Web Scrapping </h2>
+<div class="outline-text-2" id="text-1">
+
+
+</div>
+
+<div id="outline-container-1_1" class="outline-3">
+<h3 id="sec-1_1"><span class="section-number-3"></span> What is Webscrapping </h3>
+<div class="outline-text-3" id="text-1_1">
+
+<p>   Web scrapping simply means automating the process of
+</p><ul>
+<li>visiting a website
+</li>
+<li>copying the data on some temporary storage (think of a clipboard)
+</li>
+<li>pasting it on some spreadsheet program
+</li>
+<li>then performing various calculation on it, or simply saving it.
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1_2" class="outline-3">
+<h3 id="sec-1_2"><span class="section-number-3"></span> Some Examples </h3>
+<div class="outline-text-3" id="text-1_2">
+
+<ul>
+<li>Our college website provides result to individual student by querying their roll number.
+</li>
+<li>What if you need the list of all those students who failed in more than 3 subjects?
+</li>
+<li>The result of an exam is about to be out on a website, how would you track the website for any changes?
+</li>
+<li>Scrap of all the <a href="http://xkcd.com">xkcd's</a> from the website or any other website, which doesn't provide its API
+</li>
+<li>Fill up tons of form on a website whose data is stored in an spreadsheet
+</li>
+<li>Making offline app interface, or non-interactive terminal program to interact with a website (whose API is not open)
+</li>
+<li>There are few real python script related to web scrapping on my Github page
+</li>
+</ul>
+
+<p>    We'll look into all these examples during the talk.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1_3" class="outline-3">
+<h3 id="sec-1_3"><span class="section-number-3"></span> Why web scrapping </h3>
+<div class="outline-text-3" id="text-1_3">
+
+<ul>
+<li>Because it saves time.
+</li>
+<li>Time is money ;-)
+</li>
+<li>Since it is a program, it makes less errors than a typical human
+</li>
+<li>Most applications are moving to web, but we still need desktop software
+</li>
+<li>It's fun to program a webscraper
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1_4" class="outline-3">
+<h3 id="sec-1_4"><span class="section-number-3"></span> Why Python for webscrapping </h3>
+<div class="outline-text-3" id="text-1_4">
+
+<ul>
+<li>Less pain full, by nature
+</li>
+<li>Language of the internet ~ easy to program internet apps
+</li>
+<li>Batteries Included ~ preloaded modules to start scrappying on fly
+</li>
+<li>Get's you started instantly
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1_5" class="outline-3">
+<h3 id="sec-1_5"><span class="section-number-3"></span> How will this talk proceed </h3>
+<div class="outline-text-3" id="text-1_5">
+
+<ul>
+<li>We'll start looking up on each area of Webscrapping, from basic to advanced
+</li>
+<li>Not only you would learn about webscrapping but many fundamental concepts of HTTP and how webserver intracts with web browsers
+</li>
+<li>Along side, we'll try to do as much examples as possible
+</li>
+<li>We'll try to solve real world problems, hence any suggestions are invited
+</li>
+<li>Slides sucks, don't rely on them. I'll be demonstrating most of the things on a screen
+     session, you can connect with ssh on my computer and see everything in close up.
+</li>
+<li>There is a chat server on my PC, you can connect to it, I'll be posting any links or
+     similar stuff on it.
+</li>
+<li>Remember, doing few things well is better rather than doing many thing sloppily.
+</li>
+</ul>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2"></span> Basics of Webscrapping </h2>
+<div class="outline-text-2" id="text-2">
+
+
+</div>
+
+<div id="outline-container-2_1" class="outline-3">
+<h3 id="sec-2_1"><span class="section-number-3"></span> When to Web scrap </h3>
+<div class="outline-text-3" id="text-2_1">
+
+<ul>
+<li>It depends on various factors, which decides when it is favorable to webscrap 
+</li>
+<li>If the scrapper can be developed and can run in the time less than what a human(s) would spend to do the same task
+</li>
+<li>When information needed is fairly large and you can't risk for a humane mistake
+</li>
+</ul>
+
+<p>   And when not to
+</p><ul>
+<li>Writing scrappers for a one time task which a human might be able to do in 5 minutes would be a waste of time.
+</li>
+<li>When the website have captchas. This means that the website doesn't want you to web scrap
+</li>
+<li>When it is written in the TOS not to.
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-2_2" class="outline-3">
+<h3 id="sec-2_2"><span class="section-number-3"></span> Elements of webscrapping </h3>
+<div class="outline-text-3" id="text-2_2">
+
+<ul>
+<li>Fetching or crawling
+</li>
+<li>Parsing 
+<ul>
+<li>Regex 
+</li>
+<li>Markup Processor
+</li>
+<li>Custom Parsers
+</li>
+</ul>
+
+</li>
+<li>Analyzing
+</li>
+<li>Storing, stateness
+</li>
+<li>Posting back
+</li>
+</ul>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2"></span> Fetching </h2>
+<div class="outline-text-2" id="text-3">
+
+
+</div>
+
+<div id="outline-container-3_1" class="outline-3">
+<h3 id="sec-3_1"><span class="section-number-3"></span> Fetching source code of a web location </h3>
+<div class="outline-text-3" id="text-3_1">
+
+<ul>
+<li>UrlOpen
+</li>
+<li>Fetching with GET Parameters
+</li>
+<li>Fetching with POST Data
+</li>
+<li>Adding additional headers
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-3_2" class="outline-3">
+<h3 id="sec-3_2"><span class="section-number-3"></span> urllib a simple module to fetch remote resources </h3>
+<div class="outline-text-3" id="text-3_2">
+
+<ul>
+<li>Provides a method <code>urlopen</code> which can fetch resources from various protocols like http, https(no verification), ftp.
+</li>
+<li>Opens up a file-like descriptor which allows reading the remote resource
+</li>
+<li>When web scrapping, it is used to fetch the HTML source of the website.
+</li>
+<li>Respects proxies.
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-3_3" class="outline-3">
+<h3 id="sec-3_3"><span class="section-number-3"></span> Simple use of urllib.urlopen </h3>
+<div class="outline-text-3" id="text-3_3">
+
+
+
+
+<pre class="src src-python"><span style="color: #00cdcd; font-weight: bold;">import</span> urllib
+<span style="color: #cdcd00;">response_object</span>=urllib.urlopen(<span style="color: #00cd00;">"http://facebook.com"</span>)
+<span style="color: #cdcd00;">s</span>=response_object.read()
+<span style="color: #00cdcd; font-weight: bold;">print</span> s
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-3_4" class="outline-3">
+<h3 id="sec-3_4"><span class="section-number-3"></span> Passing GET parameters to urlopen </h3>
+<div class="outline-text-3" id="text-3_4">
+
+<ul>
+<li>By default the mode is GET, so you just need to append the parameters to the URL string
+
+
+
+
+<pre class="src src-python">     <span style="color: #00cdcd; font-weight: bold;">import</span> urllib
+     response_object=urllib.urlopen(<span style="color: #00cd00;">"""
+http://en.wikipedia.org/w/index.php?title=Haar-like_features&amp;oldid=449167022"""</span>)
+     s=response_object.read()
+     <span style="color: #00cdcd; font-weight: bold;">print</span> s
+</pre>
+
+
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-3_5" class="outline-3">
+<h3 id="sec-3_5"><span class="section-number-3"></span> Using urllib.urlencode </h3>
+<div class="outline-text-3" id="text-3_5">
+
+<ul>
+<li>It allows you to generate your query string based on a dictionary
+</li>
+<li>Always use urlencode for encoding URL parameters
+</li>
+<li>It automatically takes care of converting spaces into '+', and other symbols to their hex equivalent
+
+
+
+
+<pre class="src src-python"><span style="color: #cdcd00;">params</span>={<span style="color: #00cd00;">"title"</span>:<span style="color: #00cd00;">"Haar-like_features"</span>, <span style="color: #00cd00;">"oldid"</span>:<span style="color: #00cd00;">"449167022"</span>}
+<span style="color: #cdcd00;">encoded_string</span>=urllib.urlencode(params)
+<span style="color: #cdcd00;">baseurl</span>=<span style="color: #00cd00;">"http://en.wikipedia.org/w/index.php"</span>
+<span style="color: #cdcd00;">fullurl</span>=baseurl + <span style="color: #00cd00;">"?"</span> + encoded_string
+</pre>
+
+
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-3_6" class="outline-3">
+<h3 id="sec-3_6"><span class="section-number-3"></span> What about POST? </h3>
+<div class="outline-text-3" id="text-3_6">
+
+<ul>
+<li>It is as simple as GET
+</li>
+<li>Just pass the query string as the second arguement to urlopen
+
+
+
+
+<pre class="src src-python"><span style="color: #cdcd00;">query_string</span>=urllib.urlencode({<span style="color: #00cd00;">"content"</span>:<span style="color: #00cd00;">"Paste Content"</span>})
+<span style="color: #cdcd00;">f</span>=urllib.urlopen(<span style="color: #00cd00;">"http://dpaste.com/"</span>,query_string)
+<span style="color: #00cdcd; font-weight: bold;">print</span> f.geturl()
+</pre>
+
+
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-3_7" class="outline-3">
+<h3 id="sec-3_7"><span class="section-number-3"></span> Checking the end url incase of redirects </h3>
+<div class="outline-text-3" id="text-3_7">
+
+<ul>
+<li>Webserver might give <code>301</code>, <code>302</code> or other kind of redirects.
+</li>
+<li>urllib take cares of that
+</li>
+<li>In case of redirect, use <code>geturl()</code> to get the final url
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-3_8" class="outline-3">
+<h3 id="sec-3_8"><span class="section-number-3"></span> Example </h3>
+<div class="outline-text-3" id="text-3_8">
+
+<ul>
+<li>Tracking changes in content of a website.
+</li>
+<li>Why would you do that?
+<ul>
+<li>Well, some important result is coming online. You don't want to mannually refresh the page and check if something has changed
+</li>
+</ul>
+
+</li>
+</ul>
+
+<p>   Let's code it
+</p></div>
+
+</div>
+
+<div id="outline-container-3_9" class="outline-3">
+<h3 id="sec-3_9"><span class="section-number-3"></span> Example </h3>
+<div class="outline-text-3" id="text-3_9">
+
+<ul>
+<li>Making <code>dpasteme</code> a simple script to post data on <a href="http://dpaste.com">http://dpaste.com</a>
+</li>
+<li>Why would you do that?
+<ul>
+<li>When you have to paste a log while asking help online, copying from terminal and pasting on browser is not cool
+</li>
+</ul>
+
+</li>
+<li>Something like
+<pre class="example">
+cat lspci|grep USB|dpasteme
+http://dpaste.com/614691/
+</pre>
+
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-3_10" class="outline-3">
+<h3 id="sec-3_10"><span class="section-number-3"></span> That's it for now </h3>
+<div class="outline-text-3" id="text-3_10">
+
+<ul>
+<li>We'll be covering Fetching resources in much detailed way in the later sections
+</li>
+<li>There is a module called urllib2 which allows you handle URL fetching in much advanced ways
+</li>
+<li>All that later :)
+</li>
+</ul>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2"></span> Parsing </h2>
+<div class="outline-text-2" id="text-4">
+
+
+</div>
+
+<div id="outline-container-4_1" class="outline-3">
+<h3 id="sec-4_1"><span class="section-number-3"></span> Parsing </h3>
+<div class="outline-text-3" id="text-4_1">
+
+<ul>
+<li>Once you have fetched a remote location, you need to extract useful information out from it
+</li>
+<li>Parsing refers to this activity
+</li>
+<li>You'll have to parse HTML, XML, JS, JSON etc.
+</li>
+<li>Let's see how we can parse the data
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-4_2" class="outline-3">
+<h3 id="sec-4_2"><span class="section-number-3"></span> The naive way </h3>
+<div class="outline-text-3" id="text-4_2">
+
+<ul>
+<li>The naive way is to use <code>str.find</code> and slice out the strings.
+</li>
+<li>This method is very basic and works on a small domain of strings
+</li>
+<li>find, slice, index can be used
+</li>
+<li>quick, dirty, not robust
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-4_3" class="outline-3">
+<h3 id="sec-4_3"><span class="section-number-3"></span> Using Regex </h3>
+<div class="outline-text-3" id="text-4_3">
+
+<ul>
+<li>Python have a <code>re</code> module
+</li>
+<li>It is powerful and can be used for screen scrapping
+</li>
+<li>It can be inherently slow since it is regex
+</li>
+<li>Although the speed can be improved by compiling the regex
+</li>
+<li>I'll show you how it is used in one of my script later.
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-4_4" class="outline-3">
+<h3 id="sec-4_4"><span class="section-number-3"></span> Dedicated Marker Parsers </h3>
+<div class="outline-text-3" id="text-4_4">
+
+<ul>
+<li>The good news - most of the web is HTML
+</li>
+<li>By nature, HTML is easier to parse, because it is structured.
+</li>
+<li>Hence you can use some of the dedicated parsers available
+</li>
+<li>Python comes with HTML, JSON, XML parsers etc.
+</li>
+<li>Most of the time in Web scrapping, you'll be using HTML parsers to parse the source code
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-4_5" class="outline-3">
+<h3 id="sec-4_5"><span class="section-number-3"></span> Custom Parsers </h3>
+<div class="outline-text-3" id="text-4_5">
+
+<ul>
+<li>There might be instances when you'll have to write your custom parsers
+</li>
+<li>These parsers, along with the prebuilt parsers can offer great deal of flexibility
+</li>
+<li>If you write these parsers, please publish it open source online so that we can use them too
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-4_6" class="outline-3">
+<h3 id="sec-4_6"><span class="section-number-3"></span> Enter BeautifulSoup </h3>
+<div class="outline-text-3" id="text-4_6">
+
+<ul>
+<li>It is an HTML markup
+</li>
+<li>It handles bad markup easily
+</li>
+<li>Handles encoding by converting them to UTF-8
+</li>
+<li>It is Beautiful, seriously, you'll feel it when you use it
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-4_7" class="outline-3">
+<h3 id="sec-4_7"><span class="section-number-3"></span> Using Beautiful Soup </h3>
+<div class="outline-text-3" id="text-4_7">
+
+<ul>
+<li>Filling the Soup
+</li>
+<li>Basic HTML traversal
+</li>
+<li>find, findAll
+</li>
+<li>Pretty Print
+</li>
+<li>Unicode trouble
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-4_8" class="outline-3">
+<h3 id="sec-4_8"><span class="section-number-3"></span> Filling the soup </h3>
+<div class="outline-text-3" id="text-4_8">
+
+
+
+
+<pre class="src src-python"><span style="color: #00cdcd; font-weight: bold;">from</span> BeautifulSoup <span style="color: #00cdcd; font-weight: bold;">import</span> BeautifulSoup
+<span style="color: #cdcd00;">html</span>=<span style="color: #00cd00;">"""
+&lt;html&gt;&lt;head&gt;&lt;title&gt;SimplePage&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+&lt;pre&gt; Simple Body &lt;/pre&gt;
+&lt;/body&gt;
+&lt;/html&gt;"""</span>
+<span style="color: #cdcd00;">soup</span> = BeautifulSoup(html)
+<span style="color: #00cdcd; font-weight: bold;">print</span> soup.prettify()
+
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-4_9" class="outline-3">
+<h3 id="sec-4_9"><span class="section-number-3"></span> Filling Soup with urllib.urlopen </h3>
+<div class="outline-text-3" id="text-4_9">
+
+
+
+
+<pre class="src src-python"><span style="color: #00cdcd; font-weight: bold;">from</span> BeautifulSoup <span style="color: #00cdcd; font-weight: bold;">import</span> BeautifulSoup <span style="color: #00cdcd; font-weight: bold;">as</span> BS
+<span style="color: #00cdcd; font-weight: bold;">import</span> urllib
+<span style="color: #cdcd00;">resp</span> = urllib.urlopen(<span style="color: #00cd00;">"http://facebook.com"</span>)
+<span style="color: #cdcd00;">soup</span> = BS(resp)
+<span style="color: #00cdcd; font-weight: bold;">print</span> soup.prettify()
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-4_10" class="outline-3">
+<h3 id="sec-4_10"><span class="section-number-3"></span> Using BeautifulSoup </h3>
+<div class="outline-text-3" id="text-4_10">
+
+<p>   We'll check usage by demonstration
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-4_11" class="outline-3">
+<h3 id="sec-4_11"><span class="section-number-3"></span> Example </h3>
+<div class="outline-text-3" id="text-4_11">
+
+<p>  Fetching results of list of student from a University website
+</p><ul>
+<li>Why would you that?
+<ul>
+<li>Because you want to know the list of all those students who got an 'F' in the same subject you got 'F'.
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2"></span> Crawling </h2>
+<div class="outline-text-2" id="text-5">
+
+
+</div>
+
+<div id="outline-container-5_1" class="outline-3">
+<h3 id="sec-5_1"><span class="section-number-3"></span> Crawling </h3>
+<div class="outline-text-3" id="text-5_1">
+
+<ul>
+<li>Crawling basically means using links scrapped from one page as the target for the next scrap
+</li>
+<li>Examples
+<ul>
+<li>Generating a dependency tree of ArchLinux using the online database
+</li>
+<li>Downloading Manga from mangareader.net
+</li>
+<li>Whenever links have some hash value which is not determinable.
+</li>
+</ul>
+
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-5_2" class="outline-3">
+<h3 id="sec-5_2"><span class="section-number-3"></span> When should you crawl </h3>
+<div class="outline-text-3" id="text-5_2">
+
+<ul>
+<li>Whenever you have to
+</li>
+<li>Crawling means more HTTP requests
+</li>
+<li>More time spend on the network hence slow script
+</li>
+<li>Golden Rule: Avoid crawling
+</li>
+</ul>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-6" class="outline-2">
+<h2 id="sec-6"><span class="section-number-2"></span> urlretrieve </h2>
+<div class="outline-text-2" id="text-6">
+
+
+</div>
+
+<div id="outline-container-6_1" class="outline-3">
+<h3 id="sec-6_1"><span class="section-number-3"></span> Before the next example, urllretrieve </h3>
+<div class="outline-text-3" id="text-6_1">
+
+<ul>
+<li>urlopen is a fine method to fetch resources like HTML, JS, JSON
+</li>
+<li>Many times you need to download files like Images, Videos, or Binaries
+</li>
+<li>You have no interest in parsing these files
+</li>
+<li>urlretrieve is a better option
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-6_2" class="outline-3">
+<h3 id="sec-6_2"><span class="section-number-3"></span> Why urlretrieve </h3>
+<div class="outline-text-3" id="text-6_2">
+
+<ul>
+<li>It is a function made to ease out downloading of files
+</li>
+<li>Oversimplified wget
+</li>
+<li>Allows you to track your download
+</li>
+<li>Let's take an example to clear things up
+</li>
+</ul>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-7" class="outline-2">
+<h2 id="sec-7"><span class="section-number-2"></span> Examples </h2>
+<div class="outline-text-2" id="text-7">
+
+
+</div>
+
+<div id="outline-container-7_1" class="outline-3">
+<h3 id="sec-7_1"><span class="section-number-3"></span> Example of simple usage of urlretrieve </h3>
+<div class="outline-text-3" id="text-7_1">
+
+
+
+
+<pre class="src src-python"><span style="color: #00cdcd; font-weight: bold;">import</span> urllib
+urllib.urlretrieve(<span style="color: #00cd00;">"http://festember.in/11/images/bartending.jpg"</span>,<span style="color: #00cd00;">"spam.jpg"</span>)
+
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-7_2" class="outline-3">
+<h3 id="sec-7_2"><span class="section-number-3"></span> Example of urlretrieve with progress bar </h3>
+<div class="outline-text-3" id="text-7_2">
+
+
+
+
+<pre class="src src-python"><span style="color: #00cdcd; font-weight: bold;">def</span> <span style="color: #0000ee; font-weight: bold;">progress_printer</span>(transferred,block_size,total_size):
+    <span style="color: #00cd00;">"""Prints a progress bar. transferred is the number of block transferred.
+    block_size is the size of each block. total_size is the total size of
+    the file."""</span>
+    speed=0
+    <span style="color: #00cdcd; font-weight: bold;">try</span>:
+        speed=<span style="color: #0000ee; font-weight: bold;">float</span>(block_size)/speedtimer.next()/1000
+    <span style="color: #00cdcd; font-weight: bold;">except</span> <span style="color: #00cd00;">ZeroDivisionError</span>:
+        <span style="color: #00cdcd; font-weight: bold;">pass</span>
+    completed=transferred*block_size
+    percent=(completed*100)/total_size
+    sys.stdout.write(<span style="color: #00cd00;">"\r%.2f%% complete[%d/%d bytes] @ %.2f KBytes/sec"</span>% \
+                     (percent,completed,total_size,speed))
+    sys.stdout.flush()
+    
+urllib.urlretrieve(<span style="color: #00cd00;">"http://festember.in/11/images/bartending.jpg"</span>,<span style="color: #00cd00;">"spam.jpg"</span>, progress_printer)
+
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-7_3" class="outline-3">
+<h3 id="sec-7_3"><span class="section-number-3"></span> Example xkcd </h3>
+<div class="outline-text-3" id="text-7_3">
+
+<p>  Fetching the latest xkcd comic automatically. Given a range
+</p><ul>
+<li>Why would you do that?
+<ul>
+<li>Because everyone enjoy reading xkcd. For slow internet connection it is best to keep a local copy
+</li>
+</ul>
+
+</li>
+</ul>
+
+<p>  Let's hack this
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-7_4" class="outline-3">
+<h3 id="sec-7_4"><span class="section-number-3"></span> A slightly advanced example: downloading mangas </h3>
+<div class="outline-text-3" id="text-7_4">
+
+<ul>
+<li>Fetching some manga for offline reading: onemangadl
+</li>
+<li><a href="http://github.com/siddhant3s/onemangadl">http://github.com/siddhant3s/onemangadl</a>
+</li>
+<li>It downloads mangas (to oversimplify, it's a Japanese comic book)
+</li>
+<li>Why would you do that?
+<ul>
+<li>Because I like reading manga's 
+</li>
+<li>It's an awesome example for web scrapping
+</li>
+</ul>
+
+</li>
+<li>Let's make this
+</li>
+</ul>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-8" class="outline-2">
+<h2 id="sec-8"><span class="section-number-2"></span> urllib2 </h2>
+<div class="outline-text-2" id="text-8">
+
+
+</div>
+
+<div id="outline-container-8_1" class="outline-3">
+<h3 id="sec-8_1"><span class="section-number-3"></span> Before the next section, urllib2 </h3>
+<div class="outline-text-3" id="text-8_1">
+
+<ul>
+<li>Allows fetching of remote resources with advance mechanisms
+</li>
+<li>Helps in simulating a real web browser
+</li>
+<li>Allows, cookies, authentication, persistence, custom headers etc.
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-8_2" class="outline-3">
+<h3 id="sec-8_2"><span class="section-number-3"></span> Some concepts related to urllib2 </h3>
+<div class="outline-text-3" id="text-8_2">
+
+<ul>
+<li>Works on request, response model
+</li>
+<li>Make a <code>request</code> model
+</li>
+<li>Pass it to urllib2
+</li>
+<li>Do stuff on the <code>response</code> object you received
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-8_3" class="outline-3">
+<h3 id="sec-8_3"><span class="section-number-3"></span> urlopen </h3>
+<div class="outline-text-3" id="text-8_3">
+
+<ul>
+<li>Also has a urlopen
+</li>
+<li>Works same way as urllib's urlopen
+</li>
+<li>Can handle the <code>request</code> object
+
+
+
+
+<pre class="src src-python"><span style="color: #00cdcd; font-weight: bold;">import</span> urllib2
+<span style="color: #cdcd00;">response</span> = urllib2.urlopen(<span style="color: #00cd00;">'http://facebook.com/'</span>)
+<span style="color: #cdcd00;">html</span> = response.read()
+</pre>
+
+
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-8_4" class="outline-3">
+<h3 id="sec-8_4"><span class="section-number-3"></span> A simple request object </h3>
+<div class="outline-text-3" id="text-8_4">
+
+<ul>
+<li>This object mimics an actual HTTP request
+
+
+
+<pre class="src src-python"><span style="color: #00cdcd; font-weight: bold;">import</span> urllib2
+
+<span style="color: #cdcd00;">req</span> = urllib2.Request(<span style="color: #00cd00;">'http://facebook.com'</span>)
+<span style="color: #cdcd00;">response</span> = urllib2.urlopen(req)
+<span style="color: #cdcd00;">the_page</span> = response.read()
+</pre>
+
+
+</li>
+<li>At a simplest level, request object can be supplied with just the URL of the location
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-8_5" class="outline-3">
+<h3 id="sec-8_5"><span class="section-number-3"></span> Again, the data? </h3>
+<div class="outline-text-3" id="text-8_5">
+
+<ul>
+<li>Sending GET data is same as appending the query string (remember <code>urllib.urlencode</code> ?)
+</li>
+<li>Sending POST data is also simple
+
+
+
+<pre class="src src-python"><span style="color: #00cdcd; font-weight: bold;">import</span> urllib, urllib2
+<span style="color: #cdcd00;">query_string</span>=urllib.urlencode({<span style="color: #00cd00;">"content"</span>:<span style="color: #00cd00;">"Paste Content"</span>})
+
+<span style="color: #cdcd00;">req</span> = urllib2.Request(url, query_string)
+<span style="color: #cdcd00;">response</span> = urllib2.urlopen(req)
+<span style="color: #cdcd00;">the_page</span> = response.read()
+
+</pre>
+
+
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-8_6" class="outline-3">
+<h3 id="sec-8_6"><span class="section-number-3"></span> The Fun part, adding Headers </h3>
+<div class="outline-text-3" id="text-8_6">
+
+<ul>
+<li>Many times you need to add additional HTTP headers to your requests
+</li>
+<li>Like <code>User Agent</code>, for convincing web server that you are a browser
+</li>
+<li>This is the single most powerful feature of urllib2
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-8_7" class="outline-3">
+<h3 id="sec-8_7"><span class="section-number-3"></span> Adding HTTP headers </h3>
+<div class="outline-text-3" id="text-8_7">
+
+
+
+
+<pre class="src src-python"><span style="color: #00cdcd; font-weight: bold;">import</span> urllib
+<span style="color: #00cdcd; font-weight: bold;">import</span> urllib2
+
+<span style="color: #cdcd00;">url</span> = <span style="color: #00cd00;">'http://localhost/~siddhant3s/phpinfo.php'</span>
+<span style="color: #cdcd00;">user_agent</span> = <span style="color: #00cd00;">'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)'</span>
+<span style="color: #cdcd00;">values</span> = {<span style="color: #00cd00;">'name'</span> : <span style="color: #00cd00;">'Siddhant Sanyam'</span>,
+          <span style="color: #00cd00;">'age'</span> : <span style="color: #00cd00;">'20'</span>}
+
+<span style="color: #cdcd00;">headers</span> = { <span style="color: #00cd00;">'User-Agent'</span> : user_agent }
+
+<span style="color: #cdcd00;">data</span> = urllib.urlencode(values)
+<span style="color: #cdcd00;">req</span> = urllib2.Request(url, data, headers)
+<span style="color: #cdcd00;">response</span> = urllib2.urlopen(req)
+<span style="color: #cdcd00;">the_page</span> = response.read()
+<span style="color: #cdcd00;">s</span>=the_page[the_page.find(<span style="color: #00cd00;">"User-Agent "</span>):]
+<span style="color: #00cdcd; font-weight: bold;">print</span> s[:100] #Check our script
+
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-8_8" class="outline-3">
+<h3 id="sec-8_8"><span class="section-number-3"></span> Getting the response headers </h3>
+<div class="outline-text-3" id="text-8_8">
+
+<ul>
+<li>We can use the .info() on the response object to fetch all the header received
+
+
+
+
+<pre class="src src-python">response.info().keys()
+</pre>
+
+
+</li>
+</ul>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-9" class="outline-2">
+<h2 id="sec-9"><span class="section-number-2"></span> Persistence </h2>
+<div class="outline-text-2" id="text-9">
+
+
+</div>
+
+<div id="outline-container-9_1" class="outline-3">
+<h3 id="sec-9_1"><span class="section-number-3"></span> Persistence problem </h3>
+<div class="outline-text-3" id="text-9_1">
+
+<ul>
+<li>HTTP was stateless in initial days
+</li>
+<li>Bad news, now it isn't
+</li>
+<li>Websites have login and session systems
+</li>
+<li>HTTP states are maintained by use of headers
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-9_2" class="outline-3">
+<h3 id="sec-9_2"><span class="section-number-3"></span> Headers </h3>
+<div class="outline-text-3" id="text-9_2">
+
+<ul>
+<li>We know how to send Headers
+</li>
+<li>We know how to recieved headers
+</li>
+<li>Problem solved!
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-9_3" class="outline-3">
+<h3 id="sec-9_3"><span class="section-number-3"></span> Wait, there are better ways in Python </h3>
+<div class="outline-text-3" id="text-9_3">
+
+<ul>
+<li>urllib2 have concepts of <code>openers</code> and <code>handlers</code>
+</li>
+<li>They allow to create, use pre-built handlers to handler case of persistence
+</li>
+<li>We have BasicAuth managers, Cookie managers, Proxy processors
+</li>
+<li>urllib2 does all this with help of few handlers
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-9_4" class="outline-3">
+<h3 id="sec-9_4"><span class="section-number-3"></span> Openers and Handlers </h3>
+<div class="outline-text-3" id="text-9_4">
+
+<ul>
+<li>Till now we were using urlopen to open all URLs
+</li>
+<li>We can make custom openers and choose specific Handlers
+</li>
+<li>The default handler has ProxyHandler, UnknownHandler, HTTPHandler, HTTPDefaultErrorHandler, HTTPRedirectHandler, FTPHandler, FileHandler, HTTPErrorProcessor preinstalled
+</li>
+<li>Of course you can add/remove these handlers
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-9_5" class="outline-3">
+<h3 id="sec-9_5"><span class="section-number-3"></span> Simple Example of HTTPBasicAuth </h3>
+<div class="outline-text-3" id="text-9_5">
+
+
+
+
+<pre class="src src-python"># The Password Manager
+# It takes care of converting password to the default encoding (like Base64)
+<span style="color: #cdcd00;">password_mgr</span> = urllib2.HTTPPasswordMgrWithDefaultRealm()
+
+# All urls nested after /foo/ will be requested with BasicAuth Headers
+<span style="color: #cdcd00;">top_level_url</span> = <span style="color: #00cd00;">"http://example.com/foo/"</span>
+# Add the username and password.
+# If we knew the realm, we could use it instead of None.
+password_mgr.add_password(<span style="color: #cd00cd;">None</span>, top_level_url, username, password)
+
+<span style="color: #cdcd00;">handler</span> = urllib2.HTTPBasicAuthHandler(password_mgr)
+
+# create "opener" (OpenerDirector instance)
+<span style="color: #cdcd00;">opener</span> = urllib2.build_opener(handler)
+
+# use the opener to fetch a URL
+opener.open(<span style="color: #00cd00;">"http://example.com/foo/bar.html)
+
+# Install the opener.
+# Now all calls to urllib2.urlopen use our opener.
+urllib2.install_opener(opener)
+
+</span></pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-9_6" class="outline-3">
+<h3 id="sec-9_6"><span class="section-number-3"></span> Using Handlers and Openers </h3>
+<div class="outline-text-3" id="text-9_6">
+
+
+
+
+<pre class="src src-text">+--------------+    +--------------+    +----------------+
+|              |    |              |    | opener.open    |
+| Make Handler |---&gt;| build_opener |---&gt;|     or         |
+|              |    |              |    | install opener |
++--------------+    +--------------+    +----------------+
+
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-9_7" class="outline-3">
+<h3 id="sec-9_7"><span class="section-number-3"></span> Some useful opener methods </h3>
+<div class="outline-text-3" id="text-9_7">
+
+<ul>
+<li><code>opener.open</code>
+</li>
+<li><code>opener.add_handler</code>
+</li>
+<li><code>urllib2.install_opener</code>
+</li>
+<li><code>opener.addheaders</code>
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-9_8" class="outline-3">
+<h3 id="sec-9_8"><span class="section-number-3"></span> Some useful Request object methods </h3>
+<div class="outline-text-3" id="text-9_8">
+
+<ul>
+<li><code>add_data</code>
+</li>
+<li><code>get_method</code>
+</li>
+<li><code>has_data</code>
+</li>
+<li><code>add_headers</code>
+</li>
+<li><code>add_unredirected_header</code>
+</li>
+<li><code>has_header</code>
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-9_9" class="outline-3">
+<h3 id="sec-9_9"><span class="section-number-3"></span> Now let's do some login </h3>
+<div class="outline-text-3" id="text-9_9">
+
+<ul>
+<li>To do login and maintain state, you just need to handle cookies
+</li>
+<li>Cookies are sent in the headers
+</li>
+<li>Manually processing header works fine
+</li>
+<li>But <b>you</b> have to do it
+</li>
+<li>Python can do that for you
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-9_10" class="outline-3">
+<h3 id="sec-9_10"><span class="section-number-3"></span> How Online Sessions work </h3>
+<div class="outline-text-3" id="text-9_10">
+
+<ul>
+<li>Login in a website works simply due to persistent nature of cookies
+</li>
+<li>When you login, server sends a Session ID in cookies.
+</li>
+<li>Your browser stores this session ID
+</li>
+<li>For all further requests (until you logout), the browser sends this session ID back to server
+</li>
+<li>Web Server recognizes it to be a correct session ID and servers the page.
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-9_11" class="outline-3">
+<h3 id="sec-9_11"><span class="section-number-3"></span> A sample session with phpinfo </h3>
+<div class="outline-text-3" id="text-9_11">
+
+
+
+
+<pre class="src src-python"><span style="color: #00cdcd; font-weight: bold;">import</span> urllib
+<span style="color: #00cdcd; font-weight: bold;">import</span> urllib2
+
+<span style="color: #cdcd00;">url</span> = <span style="color: #00cd00;">'http://localhost/~siddhant3s/phpinfo.php'</span>
+<span style="color: #cdcd00;">user_agent</span> = <span style="color: #00cd00;">'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)'</span>
+<span style="color: #cdcd00;">values</span> = {<span style="color: #00cd00;">'name'</span> : <span style="color: #00cd00;">'Siddhant Sanyam'</span>,
+          <span style="color: #00cd00;">'age'</span> : <span style="color: #00cd00;">'20'</span>}
+
+<span style="color: #cdcd00;">headers</span> = { <span style="color: #00cd00;">'User-Agent'</span> : user_agent ,<span style="color: #00cd00;">'Cookies'</span>:<span style="color: #00cd00;">'SESSION_ID=1p2y3t4h4o5n5r6o6c7k7s'</span>}
+
+<span style="color: #cdcd00;">data</span> = urllib.urlencode(values)
+<span style="color: #cdcd00;">req</span> = urllib2.Request(url, data, headers)
+<span style="color: #cdcd00;">response</span> = urllib2.urlopen(req)
+<span style="color: #cdcd00;">the_page</span> = response.read()
+<span style="color: #cdcd00;">s</span>=the_page[the_page.find(<span style="color: #00cd00;">"HTTP_COOKIE"</span>):]
+<span style="color: #00cdcd; font-weight: bold;">print</span> s[:100] #Check out cookies
+
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-9_12" class="outline-3">
+<h3 id="sec-9_12"><span class="section-number-3"></span> Example of catching cookies </h3>
+<div class="outline-text-3" id="text-9_12">
+
+
+
+
+<pre class="src src-python">    <span style="color: #00cdcd; font-weight: bold;">import</span> urllib2
+    request = urllib2.Request(<span style="color: #00cd00;">"http://localhost/~siddhant3s/11/"</span>)
+    response=urllib2.urlopen(request)
+    <span style="color: #00cdcd; font-weight: bold;">print</span> response.info().keys()
+    #['x-powered-by', 'transfer-encoding', 'set-cookie', 'expires', 'server',
+<span style="color: #00cd00;">'connection'</span>, <span style="color: #00cd00;">'pragma'</span>#, 'cache-control', 'date', 'content-type', 'x-xrds-location']
+    
+    response.info()[<span style="color: #00cd00;">'set-cookie'</span>]
+    #'PHPSESSID=k9l406qvsblk6ju2mkkedm1qi5; path=/'
+</pre>
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-9_13" class="outline-3">
+<h3 id="sec-9_13"><span class="section-number-3"></span> The hard way, manage cookies yourself </h3>
+<div class="outline-text-3" id="text-9_13">
+
+<ul>
+<li>I just demonstrated catching and sending cookies
+</li>
+<li>So the hard way was this
+</li>
+<li>The basic flow would be like this
+
+
+
+<pre class="src src-text">+----------------+     +-------------------+
+|Send Request w/o|     | Recieve and store |
+| any cookies    |----&gt;| Cookies  by server|-+
+|                |     |                   | |
++----------------+     +-------------------+ |
++----------------+     +-------------------+ |
+| Respect session|     | Send the cookies  | |
+|  expiry        |&lt;----+ on next request   |&lt;+
+|                |     |  using headers    |
+|                |     |                   |
++----------------+     +-------------------+
+
+</pre>
+
+
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-9_14" class="outline-3">
+<h3 id="sec-9_14"><span class="section-number-3"></span> The easy way, enter HTTPCookieProcessor </h3>
+<div class="outline-text-3" id="text-9_14">
+
+<ul>
+<li>urllib2 has a handler called HTTPCookieProcessor
+</li>
+<li>It can maintain and manage cookies between subsequent requests
+</li>
+<li>Hence you can simulate a logged in user
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-9_15" class="outline-3">
+<h3 id="sec-9_15"><span class="section-number-3"></span> Few concepts </h3>
+<div class="outline-text-3" id="text-9_15">
+
+<ul>
+<li>CookieJar : an object which has information about cookies
+</li>
+<li>HTTPCookieProcessor : urllib2 Handler which handles cookies and save it to a CookieJar
+</li>
+<li>While making request, HTTPCookieProcessor sends any cookies in CookieJar
+</li>
+<li>While recieving a response, HTTPCookieProcessor stores cookie in the CookieJar
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-9_16" class="outline-3">
+<h3 id="sec-9_16"><span class="section-number-3"></span> Example, login in a website </h3>
+<div class="outline-text-3" id="text-9_16">
+
+
+
+
+<pre class="src src-python"><span style="color: #00cdcd; font-weight: bold;">import</span> urllib, urllib2, cookielib
+<span style="color: #cdcd00;">logindata</span> = urllib.urlencode({<span style="color: #00cd00;">'MobileNoLogin'</span>:<span style="color: #00cd00;">'9876543210'</span>,<span style="color: #00cd00;">'LoginPassword'</span>:<span style="color: #00cd00;">'45654'</span>})
+<span style="color: #cdcd00;">req</span> = urllib2.urlopen(<span style="color: #00cd00;">"http://fullonsms.com/home.php"</span>)
+<span style="color: #00cdcd; font-weight: bold;">print</span> req.url
+<span style="color: #cdcd00;">req</span> = urllib2.urlopen(<span style="color: #00cd00;">"http://fullonsms.com/login.php"</span>,logindata)
+<span style="color: #cdcd00;">req</span> = urllib2.urlopen(<span style="color: #00cd00;">"http://fullonsms.com/home.php"</span>)
+<span style="color: #00cdcd; font-weight: bold;">print</span> req.url
+
+#Now with cookiemanager
+<span style="color: #cdcd00;">cj</span> = cookielib.CookieJar()
+<span style="color: #cdcd00;">cookiehandler</span> = urllib2.HTTPCookieProcessor(cj)
+<span style="color: #cdcd00;">opener</span> = urllib2.build_opener(cookiehandler)
+opener.open(<span style="color: #00cd00;">"http://fullonsms.com/login.php"</span>,logindata)
+<span style="color: #cdcd00;">req</span> = opener.open(<span style="color: #00cd00;">"http://fullonsms.com/home.php"</span>)
+<span style="color: #00cdcd; font-weight: bold;">print</span> req.url
+
+
+
+
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-9_17" class="outline-3">
+<h3 id="sec-9_17"><span class="section-number-3"></span> Taking persistance to a level ahead </h3>
+<div class="outline-text-3" id="text-9_17">
+
+<ul>
+<li>CookieJar is stored in Memory
+</li>
+<li>We need a cookie jar which can be saved to disk
+</li>
+<li>Advantage: no need of logging in next time
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-9_18" class="outline-3">
+<h3 id="sec-9_18"><span class="section-number-3"></span> Do it by Hand </h3>
+<div class="outline-text-3" id="text-9_18">
+
+<ul>
+<li>Solution is simple, serialize the CookieJar
+</li>
+<li>Save it in a file
+</li>
+<li>Load the file
+</li>
+<li>And unserialize it
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-9_19" class="outline-3">
+<h3 id="sec-9_19"><span class="section-number-3"></span> Do it by Python </h3>
+<div class="outline-text-3" id="text-9_19">
+
+<ul>
+<li><code>cookielib</code> has a persistant cookiejar
+</li>
+<li>It tries to mimic Firefox, Thunderbird etc. in storing the cookies
+</li>
+<li>It is called MozillaCookieJar
+</li>
+<li>With this, you can truly be carefree about persistance 
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-9_20" class="outline-3">
+<h3 id="sec-9_20"><span class="section-number-3"></span> The MozillaCokieJar </h3>
+<div class="outline-text-3" id="text-9_20">
+
+<ul>
+<li>Simple to use, this is how you initialize it
+
+
+
+
+<pre class="src src-python"><span style="color: #00cdcd; font-weight: bold;">import</span> cookielib
+<span style="color: #cdcd00;">jar</span>=cookielib.MozillaCookieJar(<span style="color: #00cd00;">"/path/to/cookie/file"</span>)
+jar.load() #load the cookies, file must exist
+# Use your jar like you would 
+jar.save()
+</pre>
+
+
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-9_21" class="outline-3">
+<h3 id="sec-9_21"><span class="section-number-3"></span> Let's take a complete example including HTTPCookieProcessor </h3>
+<div class="outline-text-3" id="text-9_21">
+
+
+
+
+<pre class="src src-python"><span style="color: #00cdcd; font-weight: bold;">import</span> urllib,urllib2,cookielib
+<span style="color: #cdcd00;">filecookiejar</span> = cookielib.MozillaCookieJar(os.path.expanduser(<span style="color: #00cd00;">'~/.sendsms.cookies'</span>))
+<span style="color: #00cdcd; font-weight: bold;">try</span>:
+    filecookiejar.load()
+<span style="color: #00cdcd; font-weight: bold;">except</span>:
+    # File not found, make HTTPCookieProcessor w/o any initial jar
+    cookieprocessor=urllib2.HTTPCookieProcessor()
+<span style="color: #00cdcd; font-weight: bold;">else</span>:
+    # File found, cookies loaded from file
+    cookieprocessor=urllib2.HTTPCookieProcessor(filecookiejar)
+    
+<span style="color: #cdcd00;">o</span> = urllib2.build_opener( cookieprocessor )
+o.open(<span style="color: #00cd00;">"http://localhost/~siddhant3s/11"</span>)
+#some more requests
+
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-9_22" class="outline-3">
+<h3 id="sec-9_22"><span class="section-number-3"></span> Continued&hellip;. saving cookies back to file </h3>
+<div class="outline-text-3" id="text-9_22">
+
+
+
+
+<pre class="src src-python">#Now save the cookies
+<span style="color: #cdcd00;">cookiejar</span>=cookieprocessor.cookiejar
+<span style="color: #cdcd00;">cookienum</span>=<span style="color: #0000ee; font-weight: bold;">enumerate</span>(cookiejar).next()
+#Save all cookies
+<span style="color: #00cdcd; font-weight: bold;">for</span> x <span style="color: #00cdcd; font-weight: bold;">in</span> cookieenum:
+    cookie = x[1]
+    filecookiejar.set_cookie(cookie)
+
+#now save to file
+filecookiejar.save()
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-9_23" class="outline-3">
+<h3 id="sec-9_23"><span class="section-number-3"></span> Now let's do some serious shit </h3>
+<div class="outline-text-3" id="text-9_23">
+
+<ul>
+<li>There is fullonsms.com which allows sending 160char full SMSs
+</li>
+<li>We'll try to make a utility which allows us to send message using terminal
+</li>
+<li>Why?
+<ul>
+<li>Because it is faster, I don't need to go the website, close down popups
+</li>
+</ul>
+
+</li>
+<li>WARNING: For educational use only ;)
+</li>
+</ul>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-10" class="outline-2">
+<h2 id="sec-10"><span class="section-number-2"></span> Few more points </h2>
+<div class="outline-text-2" id="text-10">
+
+
+</div>
+
+<div id="outline-container-10_1" class="outline-3">
+<h3 id="sec-10_1"><span class="section-number-3"></span> More parsers </h3>
+<div class="outline-text-3" id="text-10_1">
+
+<ul>
+<li>Python has a beautiful module for parsing JSON
+</li>
+<li>Useful for the website which have JSON APIs
+</li>
+<li>XML parser is also there, sometimes you might find it useful
+</li>
+<li>BeautifulSoup will work most of the time, other heuristic based parsers are there
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-10_2" class="outline-3">
+<h3 id="sec-10_2"><span class="section-number-3"></span> Use correct parser </h3>
+<div class="outline-text-3" id="text-10_2">
+
+<ul>
+<li>Most of the off-network time on of your program would be spend in parsing 
+</li>
+<li>Choosing good parser is important
+</li>
+<li>Please use a markup parser if the document is structured in a markup
+</li>
+<li>Regex should be the last resort
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-10_3" class="outline-3">
+<h3 id="sec-10_3"><span class="section-number-3"></span> Nasty server checks </h3>
+<div class="outline-text-3" id="text-10_3">
+
+<ul>
+<li>Many webservers would be anti scrappers
+</li>
+<li>They might impose some heuristic way of checking if you are a bot
+</li>
+<li>If that is captchas, you really can't do anythign about it
+</li>
+<li>In most of the other cases, you can fool the webserver
+</li>
+<li>UserAgent check is very popular webserver check
+</li>
+<li>You may have to modify different headers in your HTTP Request
+</li>
+<li>LiveHTTPHeader is your friend
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-10_4" class="outline-3">
+<h3 id="sec-10_4"><span class="section-number-3"></span> AJAX </h3>
+<div class="outline-text-3" id="text-10_4">
+
+<ul>
+<li>New website have dynamic content loading with AJAX
+</li>
+<li>Here, you have to closely observe how the AJAX call works
+</li>
+<li>Dicipher them into simple HTTP requests
+</li>
+<li>FireBug is your friend in this case
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-10_5" class="outline-3">
+<h3 id="sec-10_5"><span class="section-number-3"></span> Crawling </h3>
+<div class="outline-text-3" id="text-10_5">
+
+<ul>
+<li>Avoid crawling when you can get the link at one place
+</li>
+<li>Even if you have to use some slow parsing
+</li>
+<li>Offline determination of new links to scrap is better than crawling
+</li>
+</ul>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-11" class="outline-2">
+<h2 id="sec-11"><span class="section-number-2"></span> Thank You </h2>
+<div class="outline-text-2" id="text-11">
+
+
+</div>
+
+<div id="outline-container-11_1" class="outline-3">
+<h3 id="sec-11_1"><span class="section-number-3"></span> Thank You </h3>
+<div class="outline-text-3" id="text-11_1">
+
+<ul>
+<li>For any further queries you can write to me at <code>siddhant3s</code> <code>at</code> <code>gmail</code> <code>dot</code> <code>com</code>
+</li>
+<li>I'm usually on IRC ##python at Freenode
+</li>
+<li>Thank you for your time, thanks for listening
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div id="postamble">
+<p class="date">Date: 2011-09-03 Sat</p>
+<p class="author">Author: Siddhant Sanyam</p>
+<p class="creator">Org version 7.5 with Emacs version 23</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+</div>
+</div>
+</body>
+</html>

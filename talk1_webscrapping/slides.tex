@@ -1,0 +1,1102 @@
+% Created 2011-09-16 Fri 10:22
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{soul}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\mode<beamer>{\usetheme{Antibes}}
+\documentclass[8pt]{beamer} 
+\providecommand{\alert}[1]{\textbf{#1}}
+
+\title{The Art of Webscrapping}
+\author{Siddhant Sanyam}
+\date{2011-09-03 Sat}
+
+\begin{document}
+
+\maketitle
+
+
+
+
+\section{Introduction to Web Scrapping}
+\label{sec-1}
+\begin{frame}
+\frametitle{What is Webscrapping}
+\label{sec-1_1}
+
+   Web scrapping simply means automating the process of
+
+\begin{itemize}
+\item visiting a website
+\item copying the data on some temporary storage (think of a clipboard)
+\item pasting it on some spreadsheet program
+\item then performing various calculation on it, or simply saving it.
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Some Examples}
+\label{sec-1_2}
+
+
+\begin{itemize}
+\item Our college website provides result to individual student by querying their roll number.
+\item What if you need the list of all those students who failed in more than 3 subjects?
+\item The result of an exam is about to be out on a website, how would you track the website for any changes?
+\item Scrap of all the \href{http://xkcd.com}{xkcd's} from the website or any other website, which doesn't provide its API
+\item Fill up tons of form on a website whose data is stored in an spreadsheet
+\item Making offline app interface, or non-interactive terminal program to interact with a website (whose API is not open)
+\item There are few real python script related to web scrapping on my Github page
+\end{itemize}
+    We'll look into all these examples during the talk.
+    
+\end{frame}
+\begin{frame}
+\frametitle{Why web scrapping}
+\label{sec-1_3}
+
+
+\begin{itemize}
+\item Because it saves time.
+\item Time is money ;-)
+\item Since it is a program, it makes less errors than a typical human
+\item Most applications are moving to web, but we still need desktop software
+\item It's fun to program a webscraper
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Why Python for webscrapping}
+\label{sec-1_4}
+
+
+\begin{itemize}
+\item Less pain full, by nature
+\item Language of the internet \~{} easy to program internet apps
+\item Batteries Included \~{} preloaded modules to start scrappying on fly
+\item Get's you started instantly
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{How will this talk proceed}
+\label{sec-1_5}
+
+
+\begin{itemize}
+\item We'll start looking up on each area of Webscrapping, from basic to advanced
+\item Not only you would learn about webscrapping but many fundamental concepts of HTTP and how webserver intracts with web browsers
+\item Along side, we'll try to do as much examples as possible
+\item We'll try to solve real world problems, hence any suggestions are invited
+\item Slides sucks, don't rely on them. I'll be demonstrating most of the things on a screen
+     session, you can connect with ssh on my computer and see everything in close up.
+\item There is a chat server on my PC, you can connect to it, I'll be posting any links or
+     similar stuff on it.
+\item Remember, doing few things well is better rather than doing many thing sloppily.
+\end{itemize}
+\end{frame}
+\section{Basics of Webscrapping}
+\label{sec-2}
+\begin{frame}
+\frametitle{When to Web scrap}
+\label{sec-2_1}
+
+
+\begin{itemize}
+\item It depends on various factors, which decides when it is favorable to webscrap
+\item If the scrapper can be developed and can run in the time less than what a human(s) would spend to do the same task
+\item When information needed is fairly large and you can't risk for a humane mistake
+\end{itemize}
+   And when not to
+
+\begin{itemize}
+\item Writing scrappers for a one time task which a human might be able to do in 5 minutes would be a waste of time.
+\item When the website have captchas. This means that the website doesn't want you to web scrap
+\item When it is written in the TOS not to.
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Elements of webscrapping}
+\label{sec-2_2}
+
+
+\begin{itemize}
+\item Fetching or crawling
+\item Parsing
+\begin{itemize}
+\item Regex
+\item Markup Processor
+\item Custom Parsers
+\end{itemize}
+\item Analyzing
+\item Storing, stateness
+\item Posting back
+\end{itemize}
+\end{frame}
+\section{Fetching}
+\label{sec-3}
+\begin{frame}
+\frametitle{Fetching source code of a web location}
+\label{sec-3_1}
+
+
+\begin{itemize}
+\item UrlOpen
+\item Fetching with GET Parameters
+\item Fetching with POST Data
+\item Adding additional headers
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{urllib a simple module to fetch remote resources}
+\label{sec-3_2}
+
+
+\begin{itemize}
+\item Provides a method \texttt{urlopen} which can fetch resources from various protocols like http, https(no verification), ftp.
+\item Opens up a file-like descriptor which allows reading the remote resource
+\item When web scrapping, it is used to fetch the HTML source of the website.
+\item Respects proxies.
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Simple use of urllib.urlopen}
+\label{sec-3_3}
+
+\begin{verbatim}
+import urllib
+response_object=urllib.urlopen("http://facebook.com")
+s=response_object.read()
+print s
+\end{verbatim}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Passing GET parameters to urlopen}
+\label{sec-3_4}
+
+
+\begin{itemize}
+\item By default the mode is GET, so you just need to append the parameters to the URL string
+     
+\begin{verbatim}
+     import urllib
+     response_object=urllib.urlopen("""
+http://en.wikipedia.org/w/index.php?title=Haar-like_features&oldid=449167022""")
+     s=response_object.read()
+     print s
+\end{verbatim}
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Using urllib.urlencode}
+\label{sec-3_5}
+
+
+\begin{itemize}
+\item It allows you to generate your query string based on a dictionary
+\item Always use urlencode for encoding URL parameters
+\item It automatically takes care of converting spaces into `+', and other symbols to their hex equivalent
+
+\begin{verbatim}
+params={"title":"Haar-like_features", "oldid":"449167022"}
+encoded_string=urllib.urlencode(params)
+baseurl="http://en.wikipedia.org/w/index.php"
+fullurl=baseurl + "?" + encoded_string
+\end{verbatim}
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{What about POST?}
+\label{sec-3_6}
+
+
+\begin{itemize}
+\item It is as simple as GET
+\item Just pass the query string as the second arguement to urlopen
+     
+\begin{verbatim}
+query_string=urllib.urlencode({"content":"Paste Content"})
+f=urllib.urlopen("http://dpaste.com/",query_string)
+print f.geturl()
+\end{verbatim}
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Checking the end url incase of redirects}
+\label{sec-3_7}
+
+
+\begin{itemize}
+\item Webserver might give \texttt{301}, \texttt{302} or other kind of redirects.
+\item urllib take cares of that
+\item In case of redirect, use \texttt{geturl()} to get the final url
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Example}
+\label{sec-3_8}
+
+
+\begin{itemize}
+\item Tracking changes in content of a website.
+\item Why would you do that?
+\begin{itemize}
+\item Well, some important result is coming online. You don't want to mannually refresh the page and check if something has changed
+\end{itemize}
+\end{itemize}
+   Let's code it
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Example}
+\label{sec-3_9}
+
+
+\begin{itemize}
+\item Making \texttt{dpasteme} a simple script to post data on \href{http://dpaste.com}{http://dpaste.com}
+\item Why would you do that?
+\begin{itemize}
+\item When you have to paste a log while asking help online, copying from terminal and pasting on browser is not cool
+\end{itemize}
+\item Something like
+\begin{verbatim}
+      cat lspci|grep USB|dpasteme
+      http://dpaste.com/614691/
+\end{verbatim}
+
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{That's it for now}
+\label{sec-3_10}
+
+
+\begin{itemize}
+\item We'll be covering Fetching resources in much detailed way in the later sections
+\item There is a module called urllib2 which allows you handle URL fetching in much advanced ways
+\item All that later :)
+\end{itemize}
+\end{frame}
+\section{Parsing}
+\label{sec-4}
+\begin{frame}
+\frametitle{Parsing}
+\label{sec-4_1}
+
+
+\begin{itemize}
+\item Once you have fetched a remote location, you need to extract useful information out from it
+\item Parsing refers to this activity
+\item You'll have to parse HTML, XML, JS, JSON etc.
+\item Let's see how we can parse the data
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{The naive way}
+\label{sec-4_2}
+
+
+\begin{itemize}
+\item The naive way is to use \texttt{str.find} and slice out the strings.
+\item This method is very basic and works on a small domain of strings
+\item find, slice, index can be used
+\item quick, dirty, not robust
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Using Regex}
+\label{sec-4_3}
+
+
+\begin{itemize}
+\item Python have a \texttt{re} module
+\item It is powerful and can be used for screen scrapping
+\item It can be inherently slow since it is regex
+\item Although the speed can be improved by compiling the regex
+\item I'll show you how it is used in one of my script later.
+\end{itemize}
+   
+\end{frame}
+\begin{frame}
+\frametitle{Dedicated Marker Parsers}
+\label{sec-4_4}
+
+
+\begin{itemize}
+\item The good news - most of the web is HTML
+\item By nature, HTML is easier to parse, because it is structured.
+\item Hence you can use some of the dedicated parsers available
+\item Python comes with HTML, JSON, XML parsers etc.
+\item Most of the time in Web scrapping, you'll be using HTML parsers to parse the source code
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Custom Parsers}
+\label{sec-4_5}
+
+
+\begin{itemize}
+\item There might be instances when you'll have to write your custom parsers
+\item These parsers, along with the prebuilt parsers can offer great deal of flexibility
+\item If you write these parsers, please publish it open source online so that we can use them too
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Enter BeautifulSoup}
+\label{sec-4_6}
+
+
+\begin{itemize}
+\item It is an HTML markup
+\item It handles bad markup easily
+\item Handles encoding by converting them to UTF-8
+\item It is Beautiful, seriously, you'll feel it when you use it
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Using Beautiful Soup}
+\label{sec-4_7}
+
+
+\begin{itemize}
+\item Filling the Soup
+\item Basic HTML traversal
+\item find, findAll
+\item Pretty Print
+\item Unicode trouble
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Filling the soup}
+\label{sec-4_8}
+
+\begin{verbatim}
+from BeautifulSoup import BeautifulSoup
+html="""
+<html><head><title>SimplePage</title></head>
+<body>
+<pre> Simple Body </pre>
+</body>
+</html>"""
+soup = BeautifulSoup(html)
+print soup.prettify()
+\end{verbatim}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Filling Soup with urllib.urlopen}
+\label{sec-4_9}
+
+\begin{verbatim}
+from BeautifulSoup import BeautifulSoup as BS
+import urllib
+resp = urllib.urlopen("http://facebook.com")
+soup = BS(resp)
+print soup.prettify()
+\end{verbatim}
+\end{frame}
+\begin{frame}
+\frametitle{Using BeautifulSoup}
+\label{sec-4_10}
+
+   We'll check usage by demonstration
+\end{frame}
+\begin{frame}
+\frametitle{Example}
+\label{sec-4_11}
+
+  Fetching results of list of student from a University website
+
+\begin{itemize}
+\item Why would you that?
+\begin{itemize}
+\item Because you want to know the list of all those students who got an `F' in the same subject you got `F'.
+\end{itemize}
+\end{itemize}
+   
+\end{frame}
+\section{Crawling}
+\label{sec-5}
+\begin{frame}
+\frametitle{Crawling}
+\label{sec-5_1}
+
+
+\begin{itemize}
+\item Crawling basically means using links scrapped from one page as the target for the next scrap
+\item Examples
+\begin{itemize}
+\item Generating a dependency tree of ArchLinux using the online database
+\item Downloading Manga from mangareader.net
+\item Whenever links have some hash value which is not determinable.
+\end{itemize}
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{When should you crawl}
+\label{sec-5_2}
+
+
+\begin{itemize}
+\item Whenever you have to
+\item Crawling means more HTTP requests
+\item More time spend on the network hence slow script
+\item Golden Rule: Avoid crawling
+\end{itemize}
+\end{frame}
+\section{urlretrieve}
+\label{sec-6}
+\begin{frame}
+\frametitle{Before the next example, urllretrieve}
+\label{sec-6_1}
+
+
+\begin{itemize}
+\item urlopen is a fine method to fetch resources like HTML, JS, JSON
+\item Many times you need to download files like Images, Videos, or Binaries
+\item You have no interest in parsing these files
+\item urlretrieve is a better option
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Why urlretrieve}
+\label{sec-6_2}
+
+
+\begin{itemize}
+\item It is a function made to ease out downloading of files
+\item Oversimplified wget
+\item Allows you to track your download
+\item Let's take an example to clear things up
+\end{itemize}
+\end{frame}
+\section{Examples}
+\label{sec-7}
+\begin{frame}[fragile]
+\frametitle{Example of simple usage of urlretrieve}
+\label{sec-7_1}
+
+\begin{verbatim}
+import urllib
+urllib.urlretrieve("http://festember.in/11/images/bartending.jpg","spam.jpg")
+\end{verbatim}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Example of urlretrieve with progress bar}
+\label{sec-7_2}
+
+\begin{verbatim}
+def progress_printer(transferred,block_size,total_size):
+    """Prints a progress bar. transferred is the number of block transferred.
+    block_size is the size of each block. total_size is the total size of
+    the file."""
+    speed=0
+    try:
+        speed=float(block_size)/speedtimer.next()/1000
+    except ZeroDivisionError:
+        pass
+    completed=transferred*block_size
+    percent=(completed*100)/total_size
+    sys.stdout.write("\r%.2f%% complete[%d/%d bytes] @ %.2f KBytes/sec"% \
+                     (percent,completed,total_size,speed))
+    sys.stdout.flush()
+    
+urllib.urlretrieve("http://festember.in/11/images/bartending.jpg","spam.jpg", progress_printer)
+\end{verbatim}
+\end{frame}
+\begin{frame}
+\frametitle{Example xkcd}
+\label{sec-7_3}
+
+  Fetching the latest xkcd comic automatically. Given a range
+
+\begin{itemize}
+\item Why would you do that?
+\begin{itemize}
+\item Because everyone enjoy reading xkcd. For slow internet connection it is best to keep a local copy
+\end{itemize}
+\end{itemize}
+  Let's hack this
+\end{frame}
+\begin{frame}
+\frametitle{A slightly advanced example: downloading mangas}
+\label{sec-7_4}
+
+
+\begin{itemize}
+\item Fetching some manga for offline reading: onemangadl
+\item \href{http://github.com/siddhant3s/onemangadl}{http://github.com/siddhant3s/onemangadl}
+\item It downloads mangas (to oversimplify, it's a Japanese comic book)
+\item Why would you do that?
+\begin{itemize}
+\item Because I like reading manga's
+\item It's an awesome example for web scrapping
+\end{itemize}
+\item Let's make this
+\end{itemize}
+\end{frame}
+\section{urllib2}
+\label{sec-8}
+\begin{frame}
+\frametitle{Before the next section, urllib2}
+\label{sec-8_1}
+
+
+\begin{itemize}
+\item Allows fetching of remote resources with advance mechanisms
+\item Helps in simulating a real web browser
+\item Allows, cookies, authentication, persistence, custom headers etc.
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Some concepts related to urllib2}
+\label{sec-8_2}
+
+
+\begin{itemize}
+\item Works on request, response model
+\item Make a \texttt{request} model
+\item Pass it to urllib2
+\item Do stuff on the \texttt{response} object you received
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{urlopen}
+\label{sec-8_3}
+
+
+\begin{itemize}
+\item Also has a urlopen
+\item Works same way as urllib's urlopen
+\item Can handle the \texttt{request} object
+     
+\begin{verbatim}
+import urllib2
+response = urllib2.urlopen('http://facebook.com/')
+html = response.read()
+\end{verbatim}
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{A simple request object}
+\label{sec-8_4}
+
+
+\begin{itemize}
+\item This object mimics an actual HTTP request
+\begin{verbatim}
+import urllib2
+
+req = urllib2.Request('http://facebook.com')
+response = urllib2.urlopen(req)
+the_page = response.read()
+\end{verbatim}
+\item At a simplest level, request object can be supplied with just the URL of the location
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Again, the data?}
+\label{sec-8_5}
+
+
+\begin{itemize}
+\item Sending GET data is same as appending the query string (remember \texttt{urllib.urlencode} ?)
+\item Sending POST data is also simple
+\begin{verbatim}
+import urllib, urllib2
+query_string=urllib.urlencode({"content":"Paste Content"})
+
+req = urllib2.Request(url, query_string)
+response = urllib2.urlopen(req)
+the_page = response.read()
+\end{verbatim}
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{The Fun part, adding Headers}
+\label{sec-8_6}
+
+
+\begin{itemize}
+\item Many times you need to add additional HTTP headers to your requests
+\item Like \texttt{User Agent}, for convincing web server that you are a browser
+\item This is the single most powerful feature of urllib2
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Adding HTTP headers}
+\label{sec-8_7}
+
+\begin{verbatim}
+import urllib
+import urllib2
+
+url = 'http://localhost/~siddhant3s/phpinfo.php'
+user_agent = 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)'
+values = {'name' : 'Siddhant Sanyam',
+          'age' : '20'}
+
+headers = { 'User-Agent' : user_agent }
+
+data = urllib.urlencode(values)
+req = urllib2.Request(url, data, headers)
+response = urllib2.urlopen(req)
+the_page = response.read()
+s=the_page[the_page.find("User-Agent "):]
+print s[:100] #Check our script
+\end{verbatim}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Getting the response headers}
+\label{sec-8_8}
+
+
+\begin{itemize}
+\item We can use the .info() on the response object to fetch all the header received
+   
+\begin{verbatim}
+response.info().keys()
+\end{verbatim}
+\end{itemize}
+\end{frame}
+\section{Persistence}
+\label{sec-9}
+\begin{frame}
+\frametitle{Persistence problem}
+\label{sec-9_1}
+
+
+\begin{itemize}
+\item HTTP was stateless in initial days
+\item Bad news, now it isn't
+\item Websites have login and session systems
+\item HTTP states are maintained by use of headers
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Headers}
+\label{sec-9_2}
+
+
+\begin{itemize}
+\item We know how to send Headers
+\item We know how to recieved headers
+\item Problem solved!
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Wait, there are better ways in Python}
+\label{sec-9_3}
+
+
+\begin{itemize}
+\item urllib2 have concepts of \texttt{openers} and \texttt{handlers}
+\item They allow to create, use pre-built handlers to handler case of persistence
+\item We have BasicAuth managers, Cookie managers, Proxy processors
+\item urllib2 does all this with help of few handlers
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Openers and Handlers}
+\label{sec-9_4}
+
+
+\begin{itemize}
+\item Till now we were using urlopen to open all URLs
+\item We can make custom openers and choose specific Handlers
+\item The default handler has ProxyHandler, UnknownHandler, HTTPHandler, HTTPDefaultErrorHandler, HTTPRedirectHandler, FTPHandler, FileHandler, HTTPErrorProcessor preinstalled
+\item Of course you can add/remove these handlers
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Simple Example of HTTPBasicAuth}
+\label{sec-9_5}
+
+\begin{verbatim}
+# The Password Manager
+# It takes care of converting password to the default encoding (like Base64)
+password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
+
+# All urls nested after /foo/ will be requested with BasicAuth Headers
+top_level_url = "http://example.com/foo/"
+# Add the username and password.
+# If we knew the realm, we could use it instead of None.
+password_mgr.add_password(None, top_level_url, username, password)
+
+handler = urllib2.HTTPBasicAuthHandler(password_mgr)
+
+# create "opener" (OpenerDirector instance)
+opener = urllib2.build_opener(handler)
+
+# use the opener to fetch a URL
+opener.open("http://example.com/foo/bar.html)
+
+# Install the opener.
+# Now all calls to urllib2.urlopen use our opener.
+urllib2.install_opener(opener)
+\end{verbatim}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Using Handlers and Openers}
+\label{sec-9_6}
+
+\begin{verbatim}
++--------------+    +--------------+    +----------------+
+|              |    |              |    | opener.open    |
+| Make Handler |--->| build_opener |--->|     or         |
+|              |    |              |    | install opener |
++--------------+    +--------------+    +----------------+
+\end{verbatim}
+\end{frame}
+\begin{frame}
+\frametitle{Some useful opener methods}
+\label{sec-9_7}
+
+
+\begin{itemize}
+\item \texttt{opener.open}
+\item \texttt{opener.add\_handler}
+\item \texttt{urllib2.install\_opener}
+\item \texttt{opener.addheaders}
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Some useful Request object methods}
+\label{sec-9_8}
+
+
+\begin{itemize}
+\item \texttt{add\_data}
+\item \texttt{get\_method}
+\item \texttt{has\_data}
+\item \texttt{add\_headers}
+\item \texttt{add\_unredirected\_header}
+\item \texttt{has\_header}
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Now let's do some login}
+\label{sec-9_9}
+
+
+\begin{itemize}
+\item To do login and maintain state, you just need to handle cookies
+\item Cookies are sent in the headers
+\item Manually processing header works fine
+\item But \textbf{you} have to do it
+\item Python can do that for you
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{How Online Sessions work}
+\label{sec-9_10}
+
+
+\begin{itemize}
+\item Login in a website works simply due to persistent nature of cookies
+\item When you login, server sends a Session ID in cookies.
+\item Your browser stores this session ID
+\item For all further requests (until you logout), the browser sends this session ID back to server
+\item Web Server recognizes it to be a correct session ID and servers the page.
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{A sample session with phpinfo}
+\label{sec-9_11}
+
+\begin{verbatim}
+import urllib
+import urllib2
+
+url = 'http://localhost/~siddhant3s/phpinfo.php'
+user_agent = 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)'
+values = {'name' : 'Siddhant Sanyam',
+          'age' : '20'}
+
+headers = { 'User-Agent' : user_agent ,'Cookies':'SESSION_ID=1p2y3t4h4o5n5r6o6c7k7s'}
+
+data = urllib.urlencode(values)
+req = urllib2.Request(url, data, headers)
+response = urllib2.urlopen(req)
+the_page = response.read()
+s=the_page[the_page.find("HTTP_COOKIE"):]
+print s[:100] #Check out cookies
+\end{verbatim}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Example of catching cookies}
+\label{sec-9_12}
+
+\begin{verbatim}
+    import urllib2
+    request = urllib2.Request("http://localhost/~siddhant3s/11/")
+    response=urllib2.urlopen(request)
+    print response.info().keys()
+    #['x-powered-by', 'transfer-encoding', 'set-cookie', 'expires', 'server',
+'connection', 'pragma'#, 'cache-control', 'date', 'content-type', 'x-xrds-location']
+    
+    response.info()['set-cookie']
+    #'PHPSESSID=k9l406qvsblk6ju2mkkedm1qi5; path=/'
+\end{verbatim}
+   
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{The hard way, manage cookies yourself}
+\label{sec-9_13}
+
+
+\begin{itemize}
+\item I just demonstrated catching and sending cookies
+\item So the hard way was this
+\item The basic flow would be like this
+\begin{verbatim}
++----------------+     +-------------------+
+|Send Request w/o|     | Recieve and store |
+| any cookies    |---->| Cookies  by server|-+
+|                |     |                   | |
++----------------+     +-------------------+ |
++----------------+     +-------------------+ |
+| Respect session|     | Send the cookies  | |
+|  expiry        |<----+ on next request   |<+
+|                |     |  using headers    |
+|                |     |                   |
++----------------+     +-------------------+
+\end{verbatim}
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{The easy way, enter HTTPCookieProcessor}
+\label{sec-9_14}
+
+
+\begin{itemize}
+\item urllib2 has a handler called HTTPCookieProcessor
+\item It can maintain and manage cookies between subsequent requests
+\item Hence you can simulate a logged in user
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Few concepts}
+\label{sec-9_15}
+
+
+\begin{itemize}
+\item CookieJar : an object which has information about cookies
+\item HTTPCookieProcessor : urllib2 Handler which handles cookies and save it to a CookieJar
+\item While making request, HTTPCookieProcessor sends any cookies in CookieJar
+\item While recieving a response, HTTPCookieProcessor stores cookie in the CookieJar
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Example, login in a website}
+\label{sec-9_16}
+
+\begin{verbatim}
+import urllib, urllib2, cookielib
+logindata = urllib.urlencode({'MobileNoLogin':'9876543210','LoginPassword':'45654'})
+req = urllib2.urlopen("http://fullonsms.com/home.php")
+print req.url
+req = urllib2.urlopen("http://fullonsms.com/login.php",logindata)
+req = urllib2.urlopen("http://fullonsms.com/home.php")
+print req.url
+
+#Now with cookiemanager
+cj = cookielib.CookieJar()
+cookiehandler = urllib2.HTTPCookieProcessor(cj)
+opener = urllib2.build_opener(cookiehandler)
+opener.open("http://fullonsms.com/login.php",logindata)
+req = opener.open("http://fullonsms.com/home.php")
+print req.url
+\end{verbatim}
+\end{frame}
+\begin{frame}
+\frametitle{Taking persistance to a level ahead}
+\label{sec-9_17}
+
+
+\begin{itemize}
+\item CookieJar is stored in Memory
+\item We need a cookie jar which can be saved to disk
+\item Advantage: no need of logging in next time
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Do it by Hand}
+\label{sec-9_18}
+
+
+\begin{itemize}
+\item Solution is simple, serialize the CookieJar
+\item Save it in a file
+\item Load the file
+\item And unserialize it
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Do it by Python}
+\label{sec-9_19}
+
+
+\begin{itemize}
+\item \texttt{cookielib} has a persistant cookiejar
+\item It tries to mimic Firefox, Thunderbird etc. in storing the cookies
+\item It is called MozillaCookieJar
+\item With this, you can truly be carefree about persistance
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{The MozillaCokieJar}
+\label{sec-9_20}
+
+
+\begin{itemize}
+\item Simple to use, this is how you initialize it
+   
+\begin{verbatim}
+import cookielib
+jar=cookielib.MozillaCookieJar("/path/to/cookie/file")
+jar.load() #load the cookies, file must exist
+# Use your jar like you would 
+jar.save()
+\end{verbatim}
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Let's take a complete example including HTTPCookieProcessor}
+\label{sec-9_21}
+
+\begin{verbatim}
+import urllib,urllib2,cookielib
+filecookiejar = cookielib.MozillaCookieJar(os.path.expanduser('~/.sendsms.cookies'))
+try:
+    filecookiejar.load()
+except:
+    # File not found, make HTTPCookieProcessor w/o any initial jar
+    cookieprocessor=urllib2.HTTPCookieProcessor()
+else:
+    # File found, cookies loaded from file
+    cookieprocessor=urllib2.HTTPCookieProcessor(filecookiejar)
+    
+o = urllib2.build_opener( cookieprocessor )
+o.open("http://localhost/~siddhant3s/11")
+#some more requests
+\end{verbatim}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Continued\ldots{}. saving cookies back to file}
+\label{sec-9_22}
+
+\begin{verbatim}
+#Now save the cookies
+cookiejar=cookieprocessor.cookiejar
+cookienum=enumerate(cookiejar).next()
+#Save all cookies
+for x in cookieenum:
+    cookie = x[1]
+    filecookiejar.set_cookie(cookie)
+
+#now save to file
+filecookiejar.save()
+\end{verbatim}
+\end{frame}
+\begin{frame}
+\frametitle{Now let's do some serious shit}
+\label{sec-9_23}
+
+
+\begin{itemize}
+\item There is fullonsms.com which allows sending 160char full SMSs
+\item We'll try to make a utility which allows us to send message using terminal
+\item Why?
+\begin{itemize}
+\item Because it is faster, I don't need to go the website, close down popups
+\end{itemize}
+\item WARNING: For educational use only ;)
+\end{itemize}
+\end{frame}
+\section{Few more points}
+\label{sec-10}
+\begin{frame}
+\frametitle{More parsers}
+\label{sec-10_1}
+
+
+\begin{itemize}
+\item Python has a beautiful module for parsing JSON
+\item Useful for the website which have JSON APIs
+\item XML parser is also there, sometimes you might find it useful
+\item BeautifulSoup will work most of the time, other heuristic based parsers are there
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Use correct parser}
+\label{sec-10_2}
+
+
+\begin{itemize}
+\item Most of the off-network time on of your program would be spend in parsing
+\item Choosing good parser is important
+\item Please use a markup parser if the document is structured in a markup
+\item Regex should be the last resort
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Nasty server checks}
+\label{sec-10_3}
+
+
+\begin{itemize}
+\item Many webservers would be anti scrappers
+\item They might impose some heuristic way of checking if you are a bot
+\item If that is captchas, you really can't do anythign about it
+\item In most of the other cases, you can fool the webserver
+\item UserAgent check is very popular webserver check
+\item You may have to modify different headers in your HTTP Request
+\item LiveHTTPHeader is your friend
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{AJAX}
+\label{sec-10_4}
+
+
+\begin{itemize}
+\item New website have dynamic content loading with AJAX
+\item Here, you have to closely observe how the AJAX call works
+\item Dicipher them into simple HTTP requests
+\item FireBug is your friend in this case
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Crawling}
+\label{sec-10_5}
+
+
+\begin{itemize}
+\item Avoid crawling when you can get the link at one place
+\item Even if you have to use some slow parsing
+\item Offline determination of new links to scrap is better than crawling
+\end{itemize}
+\end{frame}
+\section{Thank You}
+\label{sec-11}
+\begin{frame}
+\frametitle{Thank You}
+\label{sec-11_1}
+
+
+\begin{itemize}
+\item For any further queries you can write to me at \texttt{siddhant3s} \texttt{at} \texttt{gmail} \texttt{dot} \texttt{com}
+\item I'm usually on IRC \#\#python at Freenode
+\item Thank you for your time, thanks for listening
+\end{itemize}
+\end{frame}
+
+\end{document}

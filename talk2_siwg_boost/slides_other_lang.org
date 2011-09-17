@@ -1,0 +1,349 @@
+#+TITLE:     Using Python With Other languages (Boost and SWIG)
+#+AUTHOR:    Siddhant Sanyam
+#+EMAIL:     siddhant3s@gmail.com
+#+DATE:      2011-09-07 Wed
+#+DESCRIPTION: 
+#+KEYWORDS: 
+#+LANGUAGE:  en
+#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:   
+#+LINK_HOME: 
+
+#+startup: oddeven
+
+#+startup: beamer
+#+LaTeX_CLASS: beamer
+
+#+latex_header: \mode<beamer>{\usetheme{Madrid}}
+#+latex_header: \documentclass[8pt]{beamer} 
+#+BEAMER_FRAME_LEVEL: 2
+* Python With C++
+** Why C++ ?
+   - Because it is as good as C (well, most of the time)
+   - Extending C API is ugly, and terribly confusing
+   - Because it is Object Oriented
+     - Thus you can think in OOP
+     - Resembles Python (the OO part)
+   - It is more powerfull as a language
+   - Offers competitive performance as C
+   - Because of Boost (wait till I introduce you to it)
+** What can be done with Python and C++ ?
+   - Same stuff you can do with C but more
+   - You can have class abstractions
+   - Extending Python with C++
+   - Embedding Python in C++
+   - Python is more close to C++ than to C
+** Available options to extend Python with C++
+   There are multiple options that are available to extend Python with C++
+   - Using the ever-friendly Python C API
+   - Boost's API for C++
+   - SWIG
+     Let's take each one of them one by one
+** Extending Python with C++ Using Python C API
+   - Basic idea is that since C++ is essential ``C with Classes", we can use C++ as C and use the Python C API
+   - But that sucks! ... at multiple levels
+     - You have to deal with the ugly API and you miss the comfort of Boost and SWIG
+     - You are using C++ as C, so no classes and objects, why not use C then?
+     - For simple cases when you want to enjoy C++ as a language (with STL and all), it makes sense
+     - But you can't expose the class-like interface of C++
+   - When will you use it?
+     Almost never. Why? Because there are superior alternative available
+* Extending C++ using Boost.Python
+** Introduction to Boost.Python
+  So basically, it is a wrapper class on the Python C API
+  It's awesome
+  - Because it is easy to use (majorly because of the syntax)
+  - You can expose the class interface of C++ with this
+  - Great for small to medium sized projects
+  - It does operator overloading too!
+  - Inheritance is also supported
+  - In short, it brings C++ almost completely to Python
+** Boost.Python kickstart
+   We assume that you have Boost.Python installed on your system.
+   - Boost.Python also works without installing it, although it is recommended that you do install it.
+   - Boost.Python requires you to include a simple header file <boost/python.hpp>
+   - We'll be basically writing Python modules using C++
+** Compiling and Build process
+   You have many options to build and compile Boost
+   - bjam, the recommended way of building Boost
+   - mannually linking and compiling using g++
+   We'll assume g++ to be de facto standard compiler. Python 2.4 and above is recommended.
+   
+** Hello Boost!
+   Our purpose is to write a module =hello= which has a function called =say=
+   - We'll writing the definiation of the function =say= in C++
+   - Then we'll use Boost.Python to expose the function in a module called =hello=
+   - It's similar stuff we did with Python C API, but I think you'll appreciate the neatness.
+** Here is the code for =say=
+   =say= takes one =unsigned int= as an arguement and returns `Hello', 'Boost.Python' or 
+   'World' depending on if the =int= passed was 0, 1 or 2.
+   Definition of =say=
+     #+BEGIN_SRC c++ -n
+     char const* say(unsigned x)
+     {
+       static char const* const msgs[] = { "Hello", "Boost.Python", "World!" };
+     
+       if (x > 2) 
+	 throw std::range_error("say: index out of range");
+     
+       return msgs[x];
+     }
+     
+     #+END_SRC
+   - Simple enough right?
+   - Well, writing C++ is always the simple part, the important part is making a module out of it.
+** The Boost's Magic
+   Tuns out that to write the module =hello= and putting function =say= in it is pretty easy in Boost.Python
+  #+BEGIN_SRC c++  -n 
+     #include <boost/python.hpp>
+     using namespace boost::python;
+     BOOST_PYTHON_MODULE(hello)
+     {
+       def("say", //the name of the function to be exposed in Python
+	   say,   //the function name in c++
+	   "return one of 3 part of Hello Boost.Python World"); //a small description of function for the help function
+     }
+     
+  #+END_SRC
+   That's it!
+   - Now you know what is meant by ``easy to use"
+** Compile and Go
+   As I said there are multiple way to compile and go. Easiest is through bjam
+   Just execute the command
+   : bjam --tools-set
+   
+** Now that's cool, but what about higher stuff?
+   - We'll take each example file one by one
+   - Please use a text editor with Line numbering because we'll be using the line numbers to reference examples
+** Examples
+   - Exposing Classes
+   - Operator Overloading
+   - Inheritance
+   - Virtual Function
+   - Serialization
+   - Object coversion
+* Extending Python with C and C++ using SWIG
+** SWIG
+   It's a wrapper and interface writer for C/C++
+   It means
+   - You write C or C++ code, and this tool will write the interface and wrapper to other languages for your code.
+   - It supports many languages like Python, Tcl, Ruby, Guile, and Java
+   - It supports nearly every feature of C++
+   - Usually it offers a neat distinction betwen the original code and the interface (thus you don't have to modify your orignal sources much)
+** Advantage of SWIG
+   - It's a uniform over different language
+   - Hence it is awesome way to have wrappers for your C++ library.
+   - It's much more complete to cover features of C++
+   - If your interface is in separate file, writing SWIG interface is trivial.
+   - It requires none or very less change in your original source code.
+** How does it work for Python
+   - You first write your C/C++ interface and definition
+   - You write a dot i file (example.i) which specifies the interface of the wrapper
+   - Use SWIG to generate wrapper files of Python
+   - Compiler C/C++ code to a shared library
+   - Use your freshly baked module.
+** SWIG kickstart
+   - You should be having SWIG installed, Python installed.
+   - You optionally would like to have a c++ compiler installed :P
+   - We'll be using our beloved GNU's GCC in examples.
+** Hello SWIG
+   First create the C part
+   Header file/Interface file
+
+     #+BEGIN_SRC c -n
+       /*hello.h*/
+       
+       /*Signature, Prototype, Definition of the function*/
+       int factorial(int n);
+       
+       
+     #+END_SRC
+   
+** The definition
+   Now we'll write the definition of our function
+   #+BEGIN_SRC c -n 
+     /* hello.c */
+     /* Definition of factorial */
+     #include "hello.h"
+     int factorial(int n) {
+       if (n < 0){ 
+	 return 0; // Hmm, we're treating this error case
+       }
+       if (n == 0) {
+	 return 1;
+       }
+       else {
+	 return n * factorial(n-1);
+       }
+     }
+     
+   #+END_SRC
+** Using in a C program
+   This is how the main file will use this library in your  typical C program
+#+BEGIN_SRC c -n
+  #include <stdio.h>
+  #include "hello.h"
+  
+  int main(void)
+  {
+    int a = 5;
+    printf("%i", factorial(a) );
+  }
+#+END_SRC
+   And then you compile it with hello.c
+   : gcc main.c hello.c -o hello_executable
+   : ./hello_executable
+** This was C, let's make it Pythonable
+    - You will appreciate the simplicity of SWIG.
+    - Our C interface is already done.
+    - We'll just write a SWIG's .i file to expose the interface to SWIG
+** hello.i
+     #+BEGIN_SRC c
+       /* File: hello.i */
+       %module hello
+        /*
+          The following blocks are included as is in the wrapper file
+          Important to include the interface file in wrapper file
+          because the input file is just used for generating the wrapper code
+        */
+       
+       %{
+       #include "hello.h"
+       %}
+       /*
+         We'll now declare the interface for the wrapper file.
+         At worst case, we can simply #include "hello.h" again
+       */
+       int factorial(int);
+
+     #+END_SRC
+     That's it.
+** Let it SWIG
+   Now will run SWIG on this input file we just wrote.
+   : swig -python hello.i
+   Now you should have these files
+   : hello.py hello.h hello.c hello_wrap.c
+   Compile your stuff
+   : gcc -c hello.c hello_wrap.c -I /usr/include/python2.7 -I/usr/lib/python2.7/
+   You'll be having =hello.o= and =hello_wrap.o= . It's time to link them into a shared library
+   The name of the so file is module name prefixed by an underscore
+   : ld -shared -o _hello.so hello.o hello_wrap.o
+   Ta da! we have got our =_hello.so= ready.
+** Lock and load
+   - Now we have =hello.py= (generated by SWIG using hello.i)
+   - We can simply =import hello= to load the module.
+   - The loading of the .so file is job of hello.py
+** Using Module
+     #+BEGIN_SRC python
+       python
+       >>> import hello
+       >>> hello.factorial(5)
+       120
+       >>>
+     #+END_SRC
+   - Enjoyed it! Let's do it for C++ now
+** First thing first, writing the C++ code
+   - We could all the above example of simple function exposing in C++ too
+   - But since it is C++, We'll  do OOP by having a simple class of Point number
+** The interface file
+   #+BEGIN_SRC c++
+     /* File : Point.h */
+     
+     class Point
+     {
+     private:
+       int x;
+       int y;
+     public:
+       Point(int,int);
+       float dist_origin(); //distance from origin
+     };
+     
+   #+END_SRC
+** Implementation file for Point
+   #+BEGIN_SRC c++
+     /* File: Point.cpp */
+     #include "Point.h"
+     #include <cmath>
+     Point::Point(int X, int Y)
+     {
+       x=X;
+       y=Y;
+     }
+     float Point::dist_origin()
+     {
+       return pow(x*x + y*y, 0.5);
+     }
+     
+   #+END_SRC
+** Using this Library in C++ (normally)
+   #+BEGIN_SRC c++
+     /* File: main.cpp */
+     #include <iostream>
+     #include "Point.h"
+     int main()
+     {
+       Point p1= Point(2,3);
+       std::cout << p1.dist_origin();
+     }
+     
+   #+END_SRC
+   Let's compile this, like we do it in C++
+   : g++ main.cpp Point.cpp -o point_example
+   : ./point_example
+   
+** Now time for it to be eaten by Python
+   We'll write the SWIG's .i file
+   #+BEGIN_SRC c++
+     /* File : Point.i */
+     
+     %module Point // Module name
+     
+     %{
+     #include "Point.h" //including it for  the Point_wrap.cxx file
+       %}
+     
+     /*
+       We are being lazy over here. Instead of putting the
+       actual interface, we just copied it from Point.h
+     ,*/
+     %include "Point.h"
+   #+END_SRC
+   Let's quickly make the wrapper c++ file and the interface .py files using SWIG
+   : swig -python -c++ Point.i
+   Notice that we used =-c++= to tell SWIG that we'll be using Classes etc.
+** Compiling the resultant files
+   The following file are generated
+   : Point_wrap.c Point_wrap.cxx Point.py
+   Let's use g++ to compile our wrapper and source file
+   : g++ -O2 -fPIC -c Point.cpp Point_wrap.cxx -I /usr/include/python2.7/
+   Now we'll make the shared library =_Point.so= (note the naming convention is same)
+   : g++ -shared -o _Point.so Point.o Point_wrap.o 
+   That's it, we can start using this class in our Python code
+** Run the module
+   #+BEGIN_SRC python
+     python
+     >>> import Point
+     >>> p = Point.Point(3,4)
+     >>> p.dist_origin()
+     5.0
+   #+END_SRC
+   Wasn't that simple?
+** SWIG Examples
+   - Global Variables
+   - SWIG Directives
+   - Constants
+   - Pointers
+   - Operator Overloading
+   - Inheritance
+
+
+
+
+
+   
+   

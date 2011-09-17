@@ -1,0 +1,37 @@
+* Proposal for Tutorial
+** What I can cover
+*** urllib
+*** htmlparse
+*** xmlparse
+*** Regex based parsing
+*** BeautifulSoup
+*** urllib2
+*** Cookie handling
+*** MozillaCookieJar
+*** Examples
+**** Simplest: monitoring for changes in a website
+**** Barebone: Fetching Results from a University website
+**** onemangadl : Script to fetch online mangas from websites
+**** Posting data: pasteonline, a script very helpful in pasting logs, text files to free pasting websites like pastebin.com
+**** Acting like a real browser, Sending additional headers: downloading youtube videos. 
+**** Persistance: maintaining state with Cookies: Sending SMS using free services
+**** Storing state data to disk: improvising the previous script to try previous session
+**** Handling Errors, Logging
+**** Making API: API of the same SMS sending Script
+**** Making your software configurable and extendable: adding classes and inheritance
+**** Automatic XSS detector: example of crawling, how webscraping can be put in good use
+**** Dealing with Captchas
+**** Not repeating yourself. Making resuable code.
+*** Talk on using AI techniques
+*** Limitations of WebScrapping, where to use, where not to use
+** Time needed would be about 2.5 Hours plus minus 15 minutes. Exact timings spent on each example is highly dependent on the audience and can't be predicted at least until 25th July
+** I believe that this tutorial is best covered progressively using examples i.e. explaining the tools then and when needed.
+** Setup for the talk
+*** I usually give demonstration talks and tutorial using a GNU Screen setup, it would be awesome if we can have the following setup
+**** Every attendee is connected in an Internal LAN (wired or wi-fi) and so am I
+**** Attendees have SSH client through which they can SSH on my computer
+**** I have a screen session running
+**** We all share a common screen session to which only I can write and others can read
+*** I feel that this setup is better than projector setup since user can see the code and my pointer right on their own screen, they can copy-paste if required
+*** I'll need Internet connection to demonstrate all the examples.
+*** Attendees can view and download the source files from the HTTP server running on my PC.

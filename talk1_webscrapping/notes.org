@@ -1,0 +1,70 @@
+* Example of naive way of Parsing
+#+BEGIN_SRC python
+  s=urllib.urlopen("https://github.com/siddhant3s/sendsms").read()
+  l=s.find("""<div id="repository_description" rel="repository_description_edit">""")
+  s=s[l:]
+  l=s.find("<p>")
+  s=s[l:]
+  s=s[3:] #removing <p>
+  r=s.find("<span")
+  s[:r]
+  print s
+  'A python script to send sms non-interactively via fullonsms.com'
+  
+#+END_SRC
+* Results of University Website
+http://uptu.ac.in/results/EVEN_SEMESTER_10_11/bte4_10_11.asp?rollno=0909110103
+soup.find(text="First Year").next.next.string
+* BeautifulSoup
+** Basic Travarsal And Finding
+   soup.html
+   soup.body
+   soup.p.parent
+   soup('p')
+   soup.find('p')
+   soup.findAll('p')
+   soup.findAll('div')
+   len(soup.findAll('div'))
+   soup.findAll('div', id="wrapper")
+
+   soup.findAll('div', onclick="window.location.reload()") #festember
+   soup.findAll('div', onclick="window.location.reload()")[0].string
+   soup.findAll('div', onclick="window.location.reload()")[0]['class']
+
+   soup.findAll('div', id="wrapper")[0]['id']
+   soup.findAll('div', id="mainWrap")[0].header
+ #  soup.findAll('div', class="someclass")
+
+** Bad HTML
+   from BeautifulSoup import BeautifulSoup
+   html = "<html><p>Para 1<p>Para 2<blockquote>Quote 1<blockquote>Quote 2"
+   soup = BeautifulSoup(html)
+   print soup.prettify()
+** Unicode
+** Parsing
+   .parent
+   .content
+   
+   for x in soup.body:
+     print x
+ 
+** Searching
+*** findAll
+    - regex
+    - attrs
+    - list of tags to find ['table','p']
+    - a function
+    - Keyword as argument to findAll
+    - CSS class shortcut
+    - calling findAll equals calling tag
+*** find
+    searches only first one
+      
+   
+* TODO Youtube Example
+* DONE Simple Cookie Example
+  CLOSED: [2011-09-16 Fri 11:13]
+* DONE Screen Setup
+  CLOSED: [2011-09-16 Fri 11:13]
+* DONE VNC Server
+  CLOSED: [2011-09-16 Fri 11:13]
